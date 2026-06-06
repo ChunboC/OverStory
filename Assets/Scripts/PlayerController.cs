@@ -1,0 +1,92 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+using TMPro;
+
+public class PlayerController : MonoBehaviour
+{
+    
+    private Rigidbody rb;
+    private float movementX;
+    private float movementY;
+    private bool isGrounded;
+    private float mouseX;
+    private float mouseY;
+
+    public float speed = 10f; 
+    public float turnSpeed = 15f;
+    public float jumpForce = 50f;
+
+    public Transform cameraPivot;
+
+    public float mouseSensitivity = 0.1f;
+    public float upperLookLimit = 80f;  // Max angle looking up
+    public float lowerLookLimit = -40f; // Max angle looking down
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        Cursor.lockState = CursorLockMode.Locked; 
+    }
+
+    void OnLook(InputValue lookValue)
+    {
+        Vector2 lookVector = lookValue.Get<Vector2>();
+        
+        mouseX += lookVector.x * mouseSensitivity;
+        mouseY -= lookVector.y * mouseSensitivity;
+
+        mouseY = Mathf.Clamp(mouseY, lowerLookLimit, upperLookLimit); // Clamp up/down looking so the camera doesn't flip upside down
+    }
+
+
+
+    void OnMove (InputValue movementValue)
+    {
+        Vector2 movementVector = movementValue.Get<Vector2>();
+        movementX = movementVector.x; 
+        movementY = movementVector.y; 
+        
+    }
+
+    void FixedUpdate() 
+    {
+        Vector3 camForward = cameraPivot.forward;
+        Vector3 camRight = cameraPivot.right;
+        camForward.y = 0f;
+        camRight.y = 0f;
+        camForward.Normalize();
+        camRight.Normalize();
+
+        // 2. Calculate movement direction relative to where the CAMERA is looking
+        Vector3 moveDirection = (camForward * movementY) + (camRight * movementX);
+        rb.AddForce(moveDirection.normalized * speed);
+
+        // 3. Make the player model look in the direction they are physically moving
+        if (moveDirection.magnitude > 0.1f)
+        {
+            Quaternion targetPlayerRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetPlayerRotation, turnSpeed * Time.deltaTime);
+        }
+    }
+
+    void LateUpdate()
+    {    
+        cameraPivot.rotation = Quaternion.Euler(mouseY, mouseX, 0f); // Rotate the pivot based on mouse inputs. This keeps camera looking independent of player body!
+    }
+
+   void OnJump()
+    {
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, 2.0f);
+
+        if (isGrounded)
+        {
+            // Reset vertical velocity first so your jumps are perfectly consistent
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+    }
+
+
+}
