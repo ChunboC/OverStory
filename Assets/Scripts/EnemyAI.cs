@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviour
 {
     [Header("AI Navigation Settings")]
@@ -11,7 +12,7 @@ public class EnemyAI : MonoBehaviour
     [Header("Spawning Settings")]
     public GameObject slimePrefab;
     private float spawnTimer = 0f;
-    private float spawnInterval = 5.0f;
+    private float spawnInterval = 2.0f; // Maintains the faster spawn timing!
 
     void Start()
     {
@@ -21,12 +22,14 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        // Reverted: Strictly checks path progress to move from node to node
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             AdvanceToNextNodeIndex();
             CommandAIToNextNode();
         }
 
+        // Handle slime puddle generation timing
         spawnTimer += Time.deltaTime;
         if (spawnTimer >= spawnInterval)
         {
