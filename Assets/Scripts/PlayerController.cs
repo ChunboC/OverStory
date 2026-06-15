@@ -11,10 +11,12 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private float mouseX;
     private float mouseY;
+    private int jumpsRemaining = 0;
 
-    public float speed = 10f; 
+    public float speed = 10f;
     public float turnSpeed = 15f;
     public float jumpForce = 50f;
+    public int maxJumps = 2;
 
     public Transform cameraPivot;
 
@@ -68,6 +70,12 @@ public class PlayerController : MonoBehaviour
             Quaternion targetPlayerRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetPlayerRotation, turnSpeed * Time.deltaTime);
         }
+
+        // Reset jump count on landing. The velocity check prevents re-granting a jump
+        // the frame the raycast still hits the platform we just jumped off.
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, 2.0f);
+        if (isGrounded && rb.linearVelocity.y <= 0.1f)
+            jumpsRemaining = maxJumps;
     }
 
     void LateUpdate()
@@ -75,17 +83,13 @@ public class PlayerController : MonoBehaviour
         cameraPivot.rotation = Quaternion.Euler(mouseY, mouseX, 0f); // Rotate the pivot based on mouse inputs. This keeps camera looking independent of player body!
     }
 
-   void OnJump()
+    void OnJump()
     {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, 2.0f);
+        if (jumpsRemaining <= 0) return;
 
-        if (isGrounded)
-        {
-            // Reset vertical velocity first so your jumps are perfectly consistent
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-            
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-        }
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        jumpsRemaining--;
     }
 
 
