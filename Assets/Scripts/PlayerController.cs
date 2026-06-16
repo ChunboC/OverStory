@@ -24,6 +24,9 @@ public class PlayerController : MonoBehaviour
     public float upperLookLimit = 80f;  // Max angle looking up
     public float lowerLookLimit = -40f; // Max angle looking down
 
+    [Header("Game Manager")]
+    public GameManager gameManager;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -91,6 +94,23 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         jumpsRemaining--;
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Player collided with something!");
+
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Player caught the enemy!");
+
+            if (gameManager != null)
+            {
+                gameManager.WinGame();
+            }
+        }
+    }
+
+    
 
 
 }

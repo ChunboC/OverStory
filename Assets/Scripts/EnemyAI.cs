@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviour
@@ -14,10 +15,16 @@ public class EnemyAI : MonoBehaviour
     private float spawnTimer = 0f;
     private float spawnInterval = 2.0f; // Maintains the faster spawn timing!
 
+    [Header("Slowing Settings for Projectile Collision")]
+    private float normalSpeed;
+    private bool isSlowed = false;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         CommandAIToNextNode();
+
+        normalSpeed = agent.speed;
     }
 
     void Update()
@@ -59,5 +66,27 @@ public class EnemyAI : MonoBehaviour
             Instantiate(slimePrefab, transform.position, Quaternion.identity);
             Debug.Log("Troll dropped a slime puddle!");
         }
+    }
+
+    public void ApplySlow(float slowPercentage, float duration)
+    {
+        // Prevent stacking the coroutine if they are already slowed
+        if (!isSlowed && agent != null)
+        {
+            StartCoroutine(SlowRoutine(slowPercentage, duration));
+        }
+    }
+    private IEnumerator SlowRoutine(float slowPercentage, float duration)
+    {
+        isSlowed = true;
+        
+        agent.speed = normalSpeed * slowPercentage;
+        Debug.Log($"Enemy slowed! NavMesh speed is now: {agent.speed}");
+
+        yield return new WaitForSeconds(duration);
+
+        agent.speed = normalSpeed;
+        isSlowed = false;
+        Debug.Log("Enemy returned to normal NavMesh speed.");
     }
 }
