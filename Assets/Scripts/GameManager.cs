@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -18,6 +19,9 @@ public class GameManager : MonoBehaviour
     public GameObject selectedStartButton;
     public GameObject pauseMenuUI;
     public GameObject selectedPauseButton;
+
+    [Header("Input Settings")]
+    public PlayerInput playerInput;
 
     private bool isPaused;
     private bool gameOver = false;
@@ -69,21 +73,44 @@ public class GameManager : MonoBehaviour
 
         if (isPaused)
         {
-            // Clear any previous selection first to prevent bugs
+            if (playerInput != null)
+            {
+                playerInput.SwitchCurrentActionMap("UI");
+                playerInput.ActivateInput();
+            }
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            // Clear previous selection
             EventSystem.current.SetSelectedGameObject(null);
-
-            // Highlight the resume button automatically so gamepad/keyboard users can navigate
+            // Highlight the resume button automatically
             EventSystem.current.SetSelectedGameObject(selectedPauseButton);
         }
         else
         {
-            // Clear selection when unpausing so UI highlights don't get stuck on screen
+            if (playerInput != null)
+            {
+                playerInput.SwitchCurrentActionMap("Player");
+                playerInput.ActivateInput();
+            }
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            // Clear selection
             EventSystem.current.SetSelectedGameObject(null);
         }
     }
 
+    public void ResumeGame()
+    {
+        TogglePause();
+    }
+
     public void RestartGame()
     {
+        if (playerInput != null)
+        {
+            playerInput.SwitchCurrentActionMap("Player");
+            playerInput.ActivateInput();
+        }
         Time.timeScale = 1f; // Always unfreeze time before reloading
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
