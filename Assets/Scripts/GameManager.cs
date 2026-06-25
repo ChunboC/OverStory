@@ -19,6 +19,10 @@ public class GameManager : MonoBehaviour
     public GameObject selectedStartButton;
     public GameObject pauseMenuUI;
     public GameObject selectedPauseButton;
+    public GameObject winMenuUI;
+    public GameObject selectedWinButton;
+    public GameObject loseMenuUI;
+    public GameObject selectedLoseButton;
 
     [Header("Input Settings")]
     public PlayerInput playerInput;
@@ -82,7 +86,6 @@ public class GameManager : MonoBehaviour
             Cursor.visible = true;
             // Clear previous selection
             EventSystem.current.SetSelectedGameObject(null);
-            // Highlight the resume button automatically
             EventSystem.current.SetSelectedGameObject(selectedPauseButton);
         }
         else
@@ -115,10 +118,19 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    public void MainMenu()
+    {
+        SceneManager.LoadScene("StartMenu");
+    }
+
     public void ExitGame()
     {
         Debug.Log("Exiting scene");
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
         Application.Quit();
+#endif
     }
 
     // lose when time runs out
@@ -152,18 +164,17 @@ public class GameManager : MonoBehaviour
         if (gameOver) return;
 
         gameOver = true;
-
-        if (gameMessageObject != null)
+        if (playerInput != null)
         {
-            gameMessageObject.SetActive(true);
+            playerInput.SwitchCurrentActionMap("UI");
+            playerInput.ActivateInput();
         }
-
-        if (gameMessageText != null)
-        {
-            gameMessageText.text = "You Win!";
-        }
-
-        Time.timeScale = 0f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        // Clear previous selection
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(selectedWinButton);
+        SceneManager.LoadScene("WinScene");
     }
 
     public void LoseGame()
@@ -171,17 +182,16 @@ public class GameManager : MonoBehaviour
         if (gameOver) return;
 
         gameOver = true;
-
-        if (gameMessageObject != null)
+        if (playerInput != null)
         {
-            gameMessageObject.SetActive(true);
+            playerInput.SwitchCurrentActionMap("UI");
+            playerInput.ActivateInput();
         }
-
-        if (gameMessageText != null)
-        {
-            gameMessageText.text = "You Lose!";
-        }
-
-        Time.timeScale = 0f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        // Clear previous selection
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(selectedLoseButton);
+        SceneManager.LoadScene("LoseScene");
     }
 }
