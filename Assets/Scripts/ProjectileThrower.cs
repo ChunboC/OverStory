@@ -9,6 +9,8 @@ public class ProjectileThrower : MonoBehaviour
     public float throwForce = 15f;
     public float upwardForce = 5f;
 
+    private int shamrockCount = 0;
+
     public Camera playerCamera;
 
     // Update is called once per frame
@@ -17,18 +19,28 @@ public class ProjectileThrower : MonoBehaviour
         if ((Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
             || (Gamepad.current != null && Gamepad.current.leftTrigger.wasPressedThisFrame))
         {
+            if (shamrockCount > 0)
+            {
+                shamrockCount--;
 
-            Vector3 camForward = playerCamera.transform.forward;
-            Vector3 camUp = playerCamera.transform.up;
+                Vector3 camForward = playerCamera.transform.forward;
+                Vector3 camUp = playerCamera.transform.up;
 
-            GameObject projectile = Instantiate(objectToThrow, throwPoint.position, playerCamera.transform.rotation);
+                GameObject projectile = Instantiate(objectToThrow, throwPoint.position, playerCamera.transform.rotation);
 
-            Rigidbody rb = projectile.GetComponent<Rigidbody>();
+                Rigidbody rb = projectile.GetComponent<Rigidbody>();
 
-            Vector3 forceToApply = (camForward * throwForce) + (camUp * upwardForce);
+                Vector3 forceToApply = (camForward * throwForce) + (camUp * upwardForce);
 
-            rb.AddForce(forceToApply, ForceMode.Impulse);
+                rb.AddForce(forceToApply, ForceMode.Impulse);
+            }
         }
+    }
+
+    public void AddShamrock()
+    {
+        shamrockCount++;
+        Debug.Log($"Collected projectile! Current amount: {shamrockCount}");
     }
 
 }
