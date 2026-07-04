@@ -63,6 +63,10 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate() 
     {
+        if (gameManager != null && gameManager.pauseMenuUI.activeSelf)
+        {
+            return;
+        }
         Vector3 camForward = cameraPivot.forward;
         Vector3 camRight = cameraPivot.right;
         camForward.y = 0f;
@@ -122,7 +126,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    
+    private void OnPause(InputValue value)
+    {
+        if (value.isPressed && gameManager != null)
+        {
+            gameManager.TogglePause();
+        }
+    }
 
 
 }
