@@ -157,31 +157,16 @@ public class EnemyAI : MonoBehaviour
         isDroppingObstacle = true;
         spawnTimer = 0f;
 
-        if (agent != null && agent.isOnNavMesh) 
-        {
-            agent.isStopped = true;
-        }
-        ResetWaddleOrientation();
-
+        // FIXED: Replaced agent.isStopped physics freezing to keep the height tracking completely stable.
+        // The upper body animation layer takes over smoothly while the agent maintains stable footing.
         if (anim != null) 
         {
-            anim.SetBool("IsRunning", false);
             anim.SetTrigger("Attack"); 
         }
 
         SpawnSlimePuddle();
 
         yield return new WaitForSeconds(1.2f);
-
-        if (anim)
-        {
-            anim.SetBool("IsRunning", true);
-        }
-
-        if (agent != null && agent.isOnNavMesh) 
-        {
-            agent.isStopped = false;
-        }
         
         isDroppingObstacle = false;
         currentState = (activeMatchRoute.Count == 0 && currentTargetNode == beanstalkDestination) ? AIState.EscapeRun : AIState.Run;
