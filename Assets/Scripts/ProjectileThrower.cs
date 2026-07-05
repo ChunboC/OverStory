@@ -48,9 +48,10 @@ public class ProjectileThrower : MonoBehaviour
             rb.AddForce(forceToApply, ForceMode.Impulse);
 
             // Play leprechaun shoot sound
-            if (leprechaunAudio != null)
-            {
-                leprechaunAudio.PlayShoot();
+                if (leprechaunAudio != null)
+                {
+                    leprechaunAudio.PlayShoot();
+                }
             }
         }
     }
