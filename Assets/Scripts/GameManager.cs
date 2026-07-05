@@ -27,8 +27,19 @@ public class GameManager : MonoBehaviour
     [Header("Input Settings")]
     public PlayerInput playerInput;
 
+    [Header("Pre-Game Intro Setup")]
+    [SerializeField] private UnityEngine.Playables.PlayableDirector preGameDirector;
+    [SerializeField] private GameObject introSceneCameras;
+
+    [Header("Game Targets to Enable")]
+    [SerializeField] private GameObject playerGameObject;
+    [SerializeField] private GameObject enemyGameObject;
+
+    private UnityEngine.AI.NavMeshAgent enemyAgent;
+
     private bool isPaused;
     private bool gameOver = false;
+    private bool isIntroPlaying = false;
 
     void Start()
     {
@@ -55,11 +66,52 @@ public class GameManager : MonoBehaviour
                 EventSystem.current.SetSelectedGameObject(selectedStartButton);
             }
         }
+
+        if (enemyGameObject != null) enemyAgent = enemyGameObject.GetComponent<UnityEngine.AI.NavMeshAgent>();
+
+        if (preGameDirector != null)
+        {
+            isIntroPlaying = true;
+            preGameDirector.stopped += OnIntroSequenceFinished;
+            preGameDirector.Play();
+        }
     }
 
     public void StartGame()
     {
         SceneManager.LoadScene("MainScene");
+    }
+
+    private void OnIntroSequenceFinished(UnityEngine.Playables.PlayableDirector director)
+    {
+        preGameDirector.stopped -= OnIntroSequenceFinished;
+        StartGameplay();
+    }
+
+    private void StartGameplay()
+    {
+        isIntroPlaying = false;
+
+        if (playerGameObject != null)
+        {
+            var scripts = playerGameObject.GetComponents<MonoBehaviour>();
+            foreach (var script in scripts) script.enabled = true;
+        }
+
+        if (enemyGameObject != null)
+        {
+            var scripts = enemyGameObject.GetComponents<MonoBehaviour>();
+            foreach (var script in scripts) script.enabled = true;
+
+            if (enemyAgent != null) enemyAgent.enabled = true;
+        }
+
+        if (introSceneCameras != null)
+        {
+            introSceneCameras.SetActive(false);
+        }
+
+        Debug.Log("Pre-game animation finished");
     }
 
     public void TogglePause()
@@ -136,7 +188,7 @@ public class GameManager : MonoBehaviour
     // lose when time runs out
     void Update()
     {
-        if (gameOver) return;
+        if (isIntroPlaying || gameOver) return;
 
         timeRemaining -= Time.deltaTime;
 
