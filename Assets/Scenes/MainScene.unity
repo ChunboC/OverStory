@@ -2197,6 +2197,14 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 144
       objectReference: {fileID: 0}
+    - target: {fileID: 5423195943717259257, guid: 42c32334d9fa3f84097e8113f2db0f2a, type: 3}
+      propertyPath: collectSound
+      value: 
+      objectReference: {fileID: 8300000, guid: b75dc3736f02aa649be3d5ef5d14aa88, type: 3}
+    - target: {fileID: 5423195943717259257, guid: 42c32334d9fa3f84097e8113f2db0f2a, type: 3}
+      propertyPath: collectVolume
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5907719183274509235, guid: 42c32334d9fa3f84097e8113f2db0f2a, type: 3}
       propertyPath: m_Name
       value: ShamrockCollectible (1)
@@ -7755,6 +7763,14 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 144
       objectReference: {fileID: 0}
+    - target: {fileID: 5423195943717259257, guid: 42c32334d9fa3f84097e8113f2db0f2a, type: 3}
+      propertyPath: collectSound
+      value: 
+      objectReference: {fileID: 8300000, guid: b75dc3736f02aa649be3d5ef5d14aa88, type: 3}
+    - target: {fileID: 5423195943717259257, guid: 42c32334d9fa3f84097e8113f2db0f2a, type: 3}
+      propertyPath: collectVolume
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5907719183274509235, guid: 42c32334d9fa3f84097e8113f2db0f2a, type: 3}
       propertyPath: m_Name
       value: ShamrockCollectible (2)
@@ -9447,7 +9463,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &1176345720
 MonoBehaviour:
@@ -9467,8 +9483,10 @@ MonoBehaviour:
   maxJumps: 2
   cameraPivot: {fileID: 1479467567}
   mouseSensitivity: 0.1
+  controllerLookSensitivity: 300
   upperLookLimit: 80
   lowerLookLimit: -40
+  extraGravity: 20
   gameManager: {fileID: 1512007770}
 --- !u!136 &1176345721
 CapsuleCollider:
@@ -18156,6 +18174,14 @@ PrefabInstance:
     - target: {fileID: 4553379100055606134, guid: 42c32334d9fa3f84097e8113f2db0f2a, type: 3}
       propertyPath: rotationSpeed.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5423195943717259257, guid: 42c32334d9fa3f84097e8113f2db0f2a, type: 3}
+      propertyPath: collectSound
+      value: 
+      objectReference: {fileID: 8300000, guid: b75dc3736f02aa649be3d5ef5d14aa88, type: 3}
+    - target: {fileID: 5423195943717259257, guid: 42c32334d9fa3f84097e8113f2db0f2a, type: 3}
+      propertyPath: collectVolume
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5907719183274509235, guid: 42c32334d9fa3f84097e8113f2db0f2a, type: 3}
       propertyPath: m_Name
