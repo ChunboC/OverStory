@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e3d606eac4d333644b3f5756a9d7545f
+guid: ff976c642b95bf8428ab4b702cbb2839
 AudioImporter:
   externalObjects: {}
   serializedVersion: 8
@@ -26,5 +26,6 @@ AssetOrigin:
   productId: 351282
   packageName: Footsteps Sounds - Volume 02
   packageVersion: 1.0
-  assetPath: Assets/Audio/SFX/Footstep_Soft_Surface_02.wav
+  assetPath: Assets/The_Sound_Guild_FREE_PACK_Footsteps_Volume_02/WAV - 44100 Hz
+    - 16 Bit/Footstep_Soft_Surface_06.wav
   uploadId: 872572

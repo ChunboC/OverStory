@@ -36,6 +36,7 @@ public class EnemyAI : MonoBehaviour
     
     private bool isJumping = false;
     private bool isDroppingObstacle = false;
+    private TrollAudio trollAudio;
 
     void Start()
     {
@@ -51,6 +52,8 @@ public class EnemyAI : MonoBehaviour
         {
             playerTransform = GameObject.FindWithTag("Player")?.transform;
         }
+
+        trollAudio = GetComponent<TrollAudio>();
     }
 
     void Update()
@@ -214,6 +217,12 @@ public class EnemyAI : MonoBehaviour
             if (puddle != null)
             {
                 Debug.Log($"<color=green>[SPAWNER SUCCESS]</color> Instantiated {puddle.name} at {spawnPosition}");
+                
+                // Play slime drop sound
+                if (trollAudio != null)
+                {
+                    trollAudio.PlaySlimeDrop();
+                }
             }
         }
         else
@@ -302,6 +311,13 @@ public class EnemyAI : MonoBehaviour
         {
             StartCoroutine(SlowRoutine(slowPercentage, duration));
         }
+
+        // Play troll hit sound when the troll gets hit
+        if (trollAudio != null)
+        {
+            trollAudio.PlayHit();
+        }
+
     }
 
     private IEnumerator SlowRoutine(float slowPercentage, float duration)

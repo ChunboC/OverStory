@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e3d606eac4d333644b3f5756a9d7545f
+guid: 817c262b118052748b5bf38a920277e5
 AudioImporter:
   externalObjects: {}
   serializedVersion: 8
@@ -21,10 +21,3 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 351282
-  packageName: Footsteps Sounds - Volume 02
-  packageVersion: 1.0
-  assetPath: Assets/Audio/SFX/Footstep_Soft_Surface_02.wav
-  uploadId: 872572
