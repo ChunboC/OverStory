@@ -3959,7 +3959,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.28333333
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 819ff9f492c1b4ba69d8504ec52b0e12, type: 2}
   m_BuildHeightMesh: 0
@@ -7709,7 +7709,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.28333333
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 6ee10b765574b40aca09a59ab0bf69cf, type: 2}
   m_BuildHeightMesh: 0
@@ -17528,7 +17528,7 @@ GameObject:
   - component: {fileID: 1277113981}
   m_Layer: 0
   m_Name: Troll_Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
