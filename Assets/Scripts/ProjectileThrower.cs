@@ -27,8 +27,10 @@ public class ProjectileThrower : MonoBehaviour
         {
             return;
         }
-        if ((Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-            || (Gamepad.current != null && Gamepad.current.leftTrigger.wasPressedThisFrame))
+        if ((Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)|| 
+            (Gamepad.current != null &&
+            (Gamepad.current.leftTrigger.wasPressedThisFrame ||
+            Gamepad.current.rightTrigger.wasPressedThisFrame)))
         {
 
             Vector3 camForward = playerCamera.transform.forward;

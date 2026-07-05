@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     public Transform cameraPivot;
 
     public float mouseSensitivity = 0.1f;
+    public float controllerLookSensitivity = 300f;
     public float upperLookLimit = 80f;  // Max angle looking up
     public float lowerLookLimit = -40f; // Max angle looking down
 
@@ -30,6 +31,7 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
     private PlayerInput playerInput;
     private InputAction moveAction;
+    private InputAction lookAction;
     private LeprechaunPlayerAudio leprechaunAudio;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -40,17 +42,13 @@ public class PlayerController : MonoBehaviour
         anim = GetComponent<Animator>();
         playerInput = GetComponent<PlayerInput>();
         moveAction = playerInput.actions["Move"];
+        lookAction = playerInput.actions["Look"];
         leprechaunAudio = GetComponent<LeprechaunPlayerAudio>();
     }
 
     void OnLook(InputValue lookValue)
     {
-        Vector2 lookVector = lookValue.Get<Vector2>();
         
-        mouseX += lookVector.x * mouseSensitivity;
-        mouseY -= lookVector.y * mouseSensitivity;
-
-        mouseY = Mathf.Clamp(mouseY, lowerLookLimit, upperLookLimit); // Clamp up/down looking so the camera doesn't flip upside down
     }
 
 
@@ -100,8 +98,34 @@ public class PlayerController : MonoBehaviour
     }
 
     void LateUpdate()
-    {    
-        cameraPivot.rotation = Quaternion.Euler(mouseY, mouseX, 0f); // Rotate the pivot based on mouse inputs. This keeps camera looking independent of player body!
+    {
+        if (gameManager != null && gameManager.pauseMenuUI.activeSelf)
+        {
+            return;
+        }
+
+        if (lookAction != null)
+        {
+            Vector2 lookVector = lookAction.ReadValue<Vector2>();
+
+            bool usingGamepad = lookAction.activeControl != null &&
+                                lookAction.activeControl.device is Gamepad;
+
+            if (usingGamepad)
+            {
+                mouseX += lookVector.x * controllerLookSensitivity * Time.deltaTime;
+                mouseY -= lookVector.y * controllerLookSensitivity * Time.deltaTime;
+            }
+            else
+            {
+                mouseX += lookVector.x * mouseSensitivity;
+                mouseY -= lookVector.y * mouseSensitivity;
+            }
+
+            mouseY = Mathf.Clamp(mouseY, lowerLookLimit, upperLookLimit);
+        }
+
+        cameraPivot.rotation = Quaternion.Euler(mouseY, mouseX, 0f);
     }
 
     void OnJump()

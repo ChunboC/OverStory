@@ -4041,7 +4041,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.28333333
+  m_VoxelSize: 0.29999998
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 819ff9f492c1b4ba69d8504ec52b0e12, type: 2}
   m_BuildHeightMesh: 0
@@ -7854,7 +7854,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.28333333
+  m_VoxelSize: 0.29999998
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 6ee10b765574b40aca09a59ab0bf69cf, type: 2}
   m_BuildHeightMesh: 0
@@ -9812,6 +9812,7 @@ MonoBehaviour:
   maxJumps: 2
   cameraPivot: {fileID: 1479467567}
   mouseSensitivity: 0.1
+  controllerLookSensitivity: 120
   upperLookLimit: 80
   lowerLookLimit: -40
   gameManager: {fileID: 1512007770}
@@ -10634,9 +10635,13 @@ MonoBehaviour:
   - {fileID: 1350010648}
   - {fileID: 435992395}
   - {fileID: 2011798004}
+  beanstalkDestination: {fileID: 0}
+  escapeSpeedMultiplier: 1.35
   slimePrefab: {fileID: 3450760242328152523, guid: d11adf248e8224c2a97572c236eb436a, type: 3}
   dropPoint: {fileID: 0}
   spawnInterval: 3
+  minimumSpawnInterval: 1.2
+  proximityPanicDistance: 12
   waddleSpeed: 10
   tiltIntensity: 18
   visualMeshTransform: {fileID: 5472622939981306455}
@@ -10650,12 +10655,12 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 0
+  m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
