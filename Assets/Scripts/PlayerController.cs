@@ -27,11 +27,18 @@ public class PlayerController : MonoBehaviour
     [Header("Game Manager")]
     public GameManager gameManager;
 
+    private Animator anim;
+    private PlayerInput playerInput;
+    private InputAction moveAction;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked; 
+        anim = GetComponent<Animator>();
+        playerInput = GetComponent<PlayerInput>();
+        moveAction = playerInput.actions["Move"];
     }
 
     void OnLook(InputValue lookValue)
@@ -56,6 +63,10 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate() 
     {
+        if (gameManager != null && gameManager.pauseMenuUI.activeSelf)
+        {
+            return;
+        }
         Vector3 camForward = cameraPivot.forward;
         Vector3 camRight = cameraPivot.right;
         camForward.y = 0f;
@@ -79,6 +90,11 @@ public class PlayerController : MonoBehaviour
         isGrounded = Physics.Raycast(transform.position, Vector3.down, 2.0f);
         if (isGrounded && rb.linearVelocity.y <= 0.1f)
             jumpsRemaining = maxJumps;
+
+        Vector2 moveValue = moveAction.ReadValue<Vector2>();
+
+        anim.SetFloat("Pos X", moveValue.x);
+        anim.SetFloat("Pos Y", moveValue.y);
     }
 
     void LateUpdate()
@@ -110,7 +126,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    
+    private void OnPause(InputValue value)
+    {
+        if (value.isPressed && gameManager != null)
+        {
+            gameManager.TogglePause();
+        }
+    }
 
 
 }

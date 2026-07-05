@@ -11,9 +11,16 @@ public class ProjectileThrower : MonoBehaviour
 
     public Camera playerCamera;
 
+    [Header("Game Manager")]
+    public GameManager gameManager;
+
     // Update is called once per frame
     void Update()
     {
+        if (gameManager != null && gameManager.pauseMenuUI.activeSelf)
+        {
+            return;
+        }
         if ((Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
             || (Gamepad.current != null && Gamepad.current.leftTrigger.wasPressedThisFrame))
         {
