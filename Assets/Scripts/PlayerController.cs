@@ -76,9 +76,21 @@ public class PlayerController : MonoBehaviour
         camForward.Normalize();
         camRight.Normalize();
 
+        // Ground check up front so we can grab the surface normal (needed to climb ramps).
+        RaycastHit groundHit;
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, out groundHit, 2.0f);
+
         // 2. Calculate movement direction relative to where the CAMERA is looking
         Vector3 moveDirection = (camForward * movementY) + (camRight * movementX);
-        rb.AddForce(moveDirection.normalized * speed);
+
+        // Push along the slope instead of horizontally into it, otherwise the flat
+        // (y = 0) direction just drives the player into a ramp face and gravity wins.
+        Vector3 appliedDirection = moveDirection.normalized;
+        if (isGrounded)
+        {
+            appliedDirection = Vector3.ProjectOnPlane(moveDirection.normalized, groundHit.normal).normalized;
+        }
+        rb.AddForce(appliedDirection * speed);
 
         // 3. Make the player model look in the direction they are physically moving
         if (moveDirection.magnitude > 0.1f)
@@ -89,7 +101,6 @@ public class PlayerController : MonoBehaviour
 
         // Reset jump count on landing. The velocity check prevents re-granting a jump
         // the frame the raycast still hits the platform we just jumped off.
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, 2.0f);
         if (isGrounded && rb.linearVelocity.y <= 0.1f)
             jumpsRemaining = maxJumps;
 
