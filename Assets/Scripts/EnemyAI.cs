@@ -315,7 +315,7 @@ public class EnemyAI : MonoBehaviour
         if (slimePrefab != null)
         {
             Vector3 spawnPosition = dropPoint != null ? dropPoint.position : (transform.position - transform.forward * 2.5f);
-            spawnPosition.y = transform.position.y + 0.05f; 
+            spawnPosition.y = transform.position.y - 0.1f; 
             
             GameObject puddle = Instantiate(slimePrefab, spawnPosition, Quaternion.identity);
             if (puddle != null)
