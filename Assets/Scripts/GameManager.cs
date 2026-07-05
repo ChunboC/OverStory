@@ -202,6 +202,18 @@ public class GameManager : MonoBehaviour
     // lose when time runs out
     void Update()
     {
+        if (isIntroPlaying)
+        {
+            bool mouseClick = UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame;
+            bool controllerClick = UnityEngine.InputSystem.Gamepad.current != null && UnityEngine.InputSystem.Gamepad.current.buttonSouth.wasPressedThisFrame;
+
+            if (mouseClick || controllerClick)
+            {
+                SkipPreGameIntro();
+                return;
+            }
+        }
+
         if (isIntroPlaying || gameOver) return;
 
         timeRemaining -= Time.deltaTime;
@@ -213,6 +225,20 @@ public class GameManager : MonoBehaviour
         }
 
         UpdateTimerUI();
+    }
+
+    private void SkipPreGameIntro()
+    {
+        if (preGameDirector != null)
+        {
+            preGameDirector.stopped -= OnIntroSequenceFinished;
+
+            preGameDirector.time = preGameDirector.duration;
+            preGameDirector.Evaluate();
+            preGameDirector.Stop();
+        }
+
+        StartGameplay();
     }
 
     // update remaining time
