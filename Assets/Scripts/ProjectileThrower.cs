@@ -10,9 +10,15 @@ public class ProjectileThrower : MonoBehaviour
     public float upwardForce = 5f;
 
     public Camera playerCamera;
+    private LeprechaunPlayerAudio leprechaunAudio;
 
     [Header("Game Manager")]
     public GameManager gameManager;
+
+    void Start()
+    {
+        leprechaunAudio = GetComponent<LeprechaunPlayerAudio>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -35,6 +41,12 @@ public class ProjectileThrower : MonoBehaviour
             Vector3 forceToApply = (camForward * throwForce) + (camUp * upwardForce);
 
             rb.AddForce(forceToApply, ForceMode.Impulse);
+
+            // Play leprechaun shoot sound
+            if (leprechaunAudio != null)
+            {
+                leprechaunAudio.PlayShoot();
+            }
         }
     }
 

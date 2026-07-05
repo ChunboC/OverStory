@@ -45,7 +45,11 @@ public class EnemyAI : MonoBehaviour
     
     private bool isJumping = false;
     private bool isDroppingObstacle = false;
+
+    private TrollAudio trollAudio;
+
     private AIState stateBeforeJump = AIState.Run;
+
 
     void Start()
     {
@@ -63,8 +67,12 @@ public class EnemyAI : MonoBehaviour
             playerTransform = GameObject.FindWithTag("Player")?.transform;
         }
 
+
+        trollAudio = GetComponent<TrollAudio>();
+
         InitializeRandomMatchRoute();
         TransitionToNextTarget();
+
     }
 
     void Update()
@@ -320,6 +328,15 @@ public class EnemyAI : MonoBehaviour
             GameObject puddle = Instantiate(slimePrefab, spawnPosition, Quaternion.identity);
             if (puddle != null)
             {
+
+                Debug.Log($"<color=green>[SPAWNER SUCCESS]</color> Instantiated {puddle.name} at {spawnPosition}");
+
+                // Play slime drop sound
+                if (trollAudio != null)
+                {
+                    trollAudio.PlaySlimeDrop();
+                }
+
                 puddle.transform.localScale = slimePrefab.transform.localScale;
 
                 Collider slimeCollider = puddle.GetComponent<Collider>();
@@ -331,6 +348,7 @@ public class EnemyAI : MonoBehaviour
                 if (puddle.GetComponent<SlimeTrigger>() == null)
                 {
                     puddle.AddComponent<SlimeTrigger>();
+
                 }
             }
         }
@@ -424,6 +442,13 @@ public class EnemyAI : MonoBehaviour
         {
             StartCoroutine(SlowRoutine(slowPercentage, duration));
         }
+
+        // Play troll hit sound when the troll gets hit
+        if (trollAudio != null)
+        {
+            trollAudio.PlayHit();
+        }
+
     }
 
     private IEnumerator SlowRoutine(float slowPercentage, float duration)
