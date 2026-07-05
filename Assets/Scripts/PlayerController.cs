@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
     private PlayerInput playerInput;
     private InputAction moveAction;
+    private LeprechaunPlayerAudio leprechaunAudio;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -39,6 +40,7 @@ public class PlayerController : MonoBehaviour
         anim = GetComponent<Animator>();
         playerInput = GetComponent<PlayerInput>();
         moveAction = playerInput.actions["Move"];
+        leprechaunAudio = GetComponent<LeprechaunPlayerAudio>();
     }
 
     void OnLook(InputValue lookValue)
@@ -63,6 +65,10 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate() 
     {
+        if (gameManager != null && gameManager.pauseMenuUI.activeSelf)
+        {
+            return;
+        }
         Vector3 camForward = cameraPivot.forward;
         Vector3 camRight = cameraPivot.right;
         camForward.y = 0f;
@@ -105,6 +111,11 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         jumpsRemaining--;
+
+        if (leprechaunAudio != null)
+        {
+            leprechaunAudio.PlayJump();
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -122,7 +133,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    
+    private void OnPause(InputValue value)
+    {
+        if (value.isPressed && gameManager != null)
+        {
+            gameManager.TogglePause();
+        }
+    }
 
 
 }

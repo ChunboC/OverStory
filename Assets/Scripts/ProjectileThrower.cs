@@ -12,10 +12,23 @@ public class ProjectileThrower : MonoBehaviour
     private int shamrockCount = 0;
 
     public Camera playerCamera;
+    private LeprechaunPlayerAudio leprechaunAudio;
+
+    [Header("Game Manager")]
+    public GameManager gameManager;
+
+    void Start()
+    {
+        leprechaunAudio = GetComponent<LeprechaunPlayerAudio>();
+    }
 
     // Update is called once per frame
     void Update()
     {
+        if (gameManager != null && gameManager.pauseMenuUI.activeSelf)
+        {
+            return;
+        }
         if ((Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
             || (Gamepad.current != null && Gamepad.current.leftTrigger.wasPressedThisFrame))
         {
@@ -32,7 +45,12 @@ public class ProjectileThrower : MonoBehaviour
 
                 Vector3 forceToApply = (camForward * throwForce) + (camUp * upwardForce);
 
-                rb.AddForce(forceToApply, ForceMode.Impulse);
+            rb.AddForce(forceToApply, ForceMode.Impulse);
+
+            // Play leprechaun shoot sound
+            if (leprechaunAudio != null)
+            {
+                leprechaunAudio.PlayShoot();
             }
         }
     }
