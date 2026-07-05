@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     [Header("Pre-Game Intro Setup")]
     [SerializeField] private UnityEngine.Playables.PlayableDirector preGameDirector;
     [SerializeField] private GameObject introSceneCameras;
+    [SerializeField] private Transform cameraAnchor;
 
     [Header("Game Targets to Enable")]
     [SerializeField] private GameObject playerGameObject;
@@ -109,6 +110,19 @@ public class GameManager : MonoBehaviour
         if (introSceneCameras != null)
         {
             introSceneCameras.SetActive(false);
+        }
+
+        if (cameraAnchor != null)
+        {
+            Camera.main.transform.localPosition = cameraAnchor.localPosition;
+            Camera.main.transform.localRotation = cameraAnchor.localRotation;
+        }
+
+        var brain = Camera.main.GetComponent("CinemachineBrain") as MonoBehaviour;
+        if (brain != null)
+        {
+            brain.enabled = false;
+            Debug.Log("Cinemachine Brain explicitly disabled to restore child camera settings.");
         }
 
         Debug.Log("Pre-game animation finished");
