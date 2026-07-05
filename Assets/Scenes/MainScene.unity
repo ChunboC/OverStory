@@ -9792,7 +9792,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 1176345726}
   footstepClips:
-  - {fileID: 8300000, guid: 5789002365ad171428f7ef2b38beff1e, type: 3}
+  - {fileID: 8300000, guid: e3d606eac4d333644b3f5756a9d7545f, type: 3}
   jumpSound: {fileID: 8300000, guid: 554f16dbe5e6c4043b46cea95b978192, type: 3}
   shootSound: {fileID: 8300000, guid: 0340accac344fa246957e42cd95ba36b, type: 3}
   jumpVolume: 0.4

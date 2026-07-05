@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(AudioSource))]
 public class LeprechaunPlayerAudio : MonoBehaviour
@@ -13,19 +14,21 @@ public class LeprechaunPlayerAudio : MonoBehaviour
     public AudioClip jumpSound;
     public AudioClip shootSound;
 
-    [Header("Player Sound Volumes")]
+    [Header("Sound Volumes")]
+    [Range(0f, 1f)] public float footstepVolume = 0.6f;
     [Range(0f, 1f)] public float jumpVolume = 0.7f;
     [Range(0f, 1f)] public float shootVolume = 0.7f;
 
     [Header("Footstep Settings")]
     public float stepInterval = 0.45f;
-    public float minMoveSpeed = 0.1f;
-    public float footstepVolume = 0.6f;
+    public float minMoveInput = 0.1f;
 
-    private CharacterController characterController;
+    [Header("Ground Check")]
+    public float groundCheckDistance = 2.0f;
+
+    private PlayerInput playerInput;
+    private InputAction moveAction;
     private Rigidbody rb;
-
-    private Vector3 lastPosition;
     private float stepTimer;
 
     void Start()
@@ -35,16 +38,16 @@ public class LeprechaunPlayerAudio : MonoBehaviour
             audioSource = GetComponent<AudioSource>();
         }
 
-        characterController = GetComponent<CharacterController>();
+        playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
 
-        lastPosition = transform.position;
+        if (playerInput != null)
+        {
+            moveAction = playerInput.actions["Move"];
+        }
 
         audioSource.playOnAwake = false;
         audioSource.loop = false;
-
-        // For player sounds, 0 makes it easy to hear.
-        // Change to 1 if you want true 3D position-based footsteps.
         audioSource.spatialBlend = 0f;
     }
 
@@ -60,10 +63,10 @@ public class LeprechaunPlayerAudio : MonoBehaviour
             return;
         }
 
-        float moveSpeed = GetPlayerMoveSpeed();
-        bool isMoving = moveSpeed > minMoveSpeed;
+        bool grounded = IsGrounded();
+        bool pressingMove = IsPressingMoveInput();
 
-        if (isMoving)
+        if (grounded && pressingMove)
         {
             stepTimer -= Time.deltaTime;
 
@@ -75,32 +78,25 @@ public class LeprechaunPlayerAudio : MonoBehaviour
         }
         else
         {
+            // Reset immediately so footsteps stop as soon as player stops or jumps.
             stepTimer = 0f;
         }
-
-        lastPosition = transform.position;
     }
 
-    float GetPlayerMoveSpeed()
+    bool IsGrounded()
     {
-        if (characterController != null)
+        return Physics.Raycast(transform.position, Vector3.down, groundCheckDistance);
+    }
+
+    bool IsPressingMoveInput()
+    {
+        if (moveAction == null)
         {
-            Vector3 flatVelocity = characterController.velocity;
-            flatVelocity.y = 0f;
-            return flatVelocity.magnitude;
+            return false;
         }
 
-        if (rb != null)
-        {
-            Vector3 flatVelocity = rb.linearVelocity;
-            flatVelocity.y = 0f;
-            return flatVelocity.magnitude;
-        }
-
-        Vector3 movement = transform.position - lastPosition;
-        movement.y = 0f;
-
-        return movement.magnitude / Time.deltaTime;
+        Vector2 moveInput = moveAction.ReadValue<Vector2>();
+        return moveInput.magnitude > minMoveInput;
     }
 
     public void PlayFootstep()
