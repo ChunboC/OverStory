@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     public float controllerLookSensitivity = 300f;
     public float upperLookLimit = 80f;  // Max angle looking up
     public float lowerLookLimit = -40f; // Max angle looking down
+    public float extraGravity = 40f;
 
     [Header("Game Manager")]
     public GameManager gameManager;
@@ -89,7 +90,15 @@ public class PlayerController : MonoBehaviour
         // the frame the raycast still hits the platform we just jumped off.
         isGrounded = Physics.Raycast(transform.position, Vector3.down, 2.0f);
         if (isGrounded && rb.linearVelocity.y <= 0.1f)
+        {
             jumpsRemaining = maxJumps;
+        }
+
+        if (!isGrounded)
+        {
+            rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
+        }
+
 
         Vector2 moveValue = moveAction.ReadValue<Vector2>();
 
