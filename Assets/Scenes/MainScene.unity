@@ -8756,6 +8756,8 @@ PlayableDirector:
     value: {fileID: 1176345724}
   - key: {fileID: 8809996739585013785, guid: 654b4a533a006804e9ce971de042aa99, type: 2}
     value: {fileID: 5866666020898504115}
+  - key: {fileID: -6926810305745820093, guid: 654b4a533a006804e9ce971de042aa99, type: 2}
+    value: {fileID: 5866666020898504115}
   m_ExposedReferences:
     m_References:
     - 79920461baae4fb41b0dee69ae705150: {fileID: 2031722672}
@@ -10531,7 +10533,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7689fc6434a04c841af46495e507ea5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  throwPoint: {fileID: 0}
+  throwPoint: {fileID: 1441265997255090310}
   objectToThrow: {fileID: 5907719183274509235, guid: ef354581575815543bea53b6e8b9abac, type: 3}
   throwForce: 50
   upwardForce: 10
@@ -11273,7 +11275,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132148018969971}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7165dfb31c10b465d9e8bb7fb7eb1199, type: 3}
   m_Name: 
@@ -11302,7 +11304,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132148018969971}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5
@@ -19662,6 +19664,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf7f22a1e6b70454184894294ab8b7c7, type: 3}
+--- !u!4 &1441265997255090310 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6400180888727159519, guid: bf7f22a1e6b70454184894294ab8b7c7, type: 3}
+  m_PrefabInstance: {fileID: 1441265997255090309}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1510652387242520151
 Transform:
   m_ObjectHideFlags: 0
@@ -20778,7 +20785,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132148018969971}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5992a4221532f2741a72b1ade50f9fe8, type: 3}
   m_Name: 
