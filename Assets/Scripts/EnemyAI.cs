@@ -286,6 +286,19 @@ public class EnemyAI : MonoBehaviour
 
     private void ResetWaddleOrientation() { if (visualMeshTransform != null) visualMeshTransform.localRotation = Quaternion.identity; }
     public void TriggerVictoryState() => currentState = AIState.Laugh;
-    public void ApplySlow(float s, float d) => StartCoroutine(SlowRoutine(s, d));
+    public void ApplySlow(float s, float d)
+    {
+        // Play troll hit sound when projectile hits enemy
+        if (trollAudio != null)
+        {
+            trollAudio.PlayHit();
+        }
+
+        // Apply slow effect
+        if (!isSlowed)
+        {
+            StartCoroutine(SlowRoutine(s, d));
+        }
+    }
     private IEnumerator SlowRoutine(float s, float d) { isSlowed = true; agent.speed = normalSpeed * s; yield return new WaitForSeconds(d); agent.speed = normalSpeed; isSlowed = false; }
 }
