@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [Header("Timer Settings")]
     public float timeRemaining = 60f;
     public TMP_Text timerText;
+    public TMP_Text shamrockText;
 
     [Header("Game Message UI")]
     public GameObject gameMessageObject;
@@ -225,6 +226,12 @@ public class GameManager : MonoBehaviour
         }
 
         UpdateTimerUI();
+
+        if (playerGameObject != null)
+        {
+            ProjectileThrower thrower = playerGameObject.GetComponent<ProjectileThrower>();
+            UpdateShamrockCount(thrower.ShamrockCount);
+        }
     }
 
     private void SkipPreGameIntro()
@@ -247,6 +254,14 @@ public class GameManager : MonoBehaviour
         if (timerText != null)
         {
             timerText.text = "Time: " + Mathf.CeilToInt(timeRemaining).ToString();
+        }
+    }
+
+    void UpdateShamrockCount(int shamCount)
+    {
+        if (shamrockText != null)
+        {
+            shamrockText.text = $"    x{shamCount}";
         }
     }
 

@@ -10,6 +10,7 @@ public class ProjectileThrower : MonoBehaviour
     public float upwardForce = 5f;
 
     private int shamrockCount = 0;
+    public int ShamrockCount => shamrockCount;
 
     public Camera playerCamera;
     private LeprechaunPlayerAudio leprechaunAudio;
