@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [Header("Timer Settings")]
     public float timeRemaining = 60f;
     public TMP_Text timerText;
+    public TMP_Text shamrockText;
 
     [Header("Game Message UI")]
     public GameObject gameMessageObject;
@@ -27,8 +28,20 @@ public class GameManager : MonoBehaviour
     [Header("Input Settings")]
     public PlayerInput playerInput;
 
+    [Header("Pre-Game Intro Setup")]
+    [SerializeField] private UnityEngine.Playables.PlayableDirector preGameDirector;
+    [SerializeField] private GameObject introSceneCameras;
+    [SerializeField] private Transform cameraAnchor;
+
+    [Header("Game Targets to Enable")]
+    [SerializeField] private GameObject playerGameObject;
+    [SerializeField] private GameObject enemyGameObject;
+
+    private UnityEngine.AI.NavMeshAgent enemyAgent;
+
     private bool isPaused;
     private bool gameOver = false;
+    private bool isIntroPlaying = false;
 
     void Start()
     {
@@ -55,11 +68,65 @@ public class GameManager : MonoBehaviour
                 EventSystem.current.SetSelectedGameObject(selectedStartButton);
             }
         }
+
+        if (enemyGameObject != null) enemyAgent = enemyGameObject.GetComponent<UnityEngine.AI.NavMeshAgent>();
+
+        if (preGameDirector != null)
+        {
+            isIntroPlaying = true;
+            preGameDirector.stopped += OnIntroSequenceFinished;
+            preGameDirector.Play();
+        }
     }
 
     public void StartGame()
     {
         SceneManager.LoadScene("MainScene");
+    }
+
+    private void OnIntroSequenceFinished(UnityEngine.Playables.PlayableDirector director)
+    {
+        preGameDirector.stopped -= OnIntroSequenceFinished;
+        StartGameplay();
+    }
+
+    private void StartGameplay()
+    {
+        isIntroPlaying = false;
+
+        if (playerGameObject != null)
+        {
+            var scripts = playerGameObject.GetComponents<MonoBehaviour>();
+            foreach (var script in scripts) script.enabled = true;
+        }
+
+        if (enemyGameObject != null)
+        {
+            var scripts = enemyGameObject.GetComponents<MonoBehaviour>();
+            foreach (var script in scripts) script.enabled = true;
+
+            if (enemyAgent != null) enemyAgent.enabled = true;
+        }
+
+        if (introSceneCameras != null)
+        {
+            introSceneCameras.SetActive(false);
+        }
+
+        if (cameraAnchor != null)
+        {
+            Camera.main.transform.localPosition = cameraAnchor.localPosition;
+            Camera.main.transform.localRotation = cameraAnchor.localRotation;
+        }
+
+        var brain = Camera.main.GetComponent("CinemachineBrain") as MonoBehaviour;
+        if (brain != null)
+        {
+            brain.enabled = false;
+            Debug.Log("Cinemachine Brain explicitly disabled to restore child camera settings.");
+        }
+
+        Debug.Log("Pre-game animation finished");
     }
 
     public void TogglePause()
@@ -136,7 +203,19 @@ public class GameManager : MonoBehaviour
     // lose when time runs out
     void Update()
     {
-        if (gameOver) return;
+        if (isIntroPlaying)
+        {
+            bool mouseClick = UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame;
+            bool controllerClick = UnityEngine.InputSystem.Gamepad.current != null && UnityEngine.InputSystem.Gamepad.current.buttonSouth.wasPressedThisFrame;
+
+            if (mouseClick || controllerClick)
+            {
+                SkipPreGameIntro();
+                return;
+            }
+        }
+
+        if (isIntroPlaying || gameOver) return;
 
         timeRemaining -= Time.deltaTime;
 
@@ -147,6 +226,26 @@ public class GameManager : MonoBehaviour
         }
 
         UpdateTimerUI();
+
+        if (playerGameObject != null)
+        {
+            ProjectileThrower thrower = playerGameObject.GetComponent<ProjectileThrower>();
+            UpdateShamrockCount(thrower.ShamrockCount);
+        }
+    }
+
+    private void SkipPreGameIntro()
+    {
+        if (preGameDirector != null)
+        {
+            preGameDirector.stopped -= OnIntroSequenceFinished;
+
+            preGameDirector.time = preGameDirector.duration;
+            preGameDirector.Evaluate();
+            preGameDirector.Stop();
+        }
+
+        StartGameplay();
     }
 
     // update remaining time
@@ -155,6 +254,14 @@ public class GameManager : MonoBehaviour
         if (timerText != null)
         {
             timerText.text = "Time: " + Mathf.CeilToInt(timeRemaining).ToString();
+        }
+    }
+
+    void UpdateShamrockCount(int shamCount)
+    {
+        if (shamrockText != null)
+        {
+            shamrockText.text = $"    x{shamCount}";
         }
     }
 
