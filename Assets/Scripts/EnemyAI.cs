@@ -241,16 +241,34 @@ public class EnemyAI : MonoBehaviour
     }
 
     void SpawnSlimePuddle()
+{
+    if (slimePrefab != null)
     {
-        if (slimePrefab != null)
+        // 1. Define our starting point
+        Vector3 basePos = dropPoint != null ? dropPoint.position : (transform.position - transform.forward * 2.5f);
+        Vector3 spawnPosition = basePos;
+        
+        // 2. Add an offset to push the slime away from the wall
+        // We check a radius (e.g., 1.5 units) to see if we are hitting a building (tagged "Building")
+        // If we hit, we push the slime out along the direction the Troll is facing
+        Collider[] hits = Physics.OverlapSphere(basePos, 1.5f, LayerMask.GetMask("Building"));
+        if (hits.Length > 0)
         {
-            Vector3 pos = dropPoint != null ? dropPoint.position : (transform.position - transform.forward * 2.5f);
-            pos.y = transform.position.y - 0.1f; 
-            GameObject puddle = Instantiate(slimePrefab, pos, Quaternion.identity);
-            if (trollAudio != null) trollAudio.PlaySlimeDrop();
-            if (puddle.GetComponent<SlimeTrigger>() == null) puddle.AddComponent<SlimeTrigger>();
+            // Push the spawn position 2 units away from the building
+            spawnPosition = basePos + (transform.right * 2.0f);
         }
+
+        spawnPosition.y = transform.position.y - 0.1f; 
+        
+        GameObject puddle = Instantiate(slimePrefab, spawnPosition, Quaternion.identity);
+        
+        // Assign to the Slime layer so the Troll ignores it
+        puddle.layer = LayerMask.NameToLayer("Slime");
+
+        if (trollAudio != null) trollAudio.PlaySlimeDrop();
+        if (puddle.GetComponent<SlimeTrigger>() == null) puddle.AddComponent<SlimeTrigger>();
     }
+}
 
     private IEnumerator TriggerTrollJump()
     {
