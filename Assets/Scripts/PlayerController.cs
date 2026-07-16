@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
 
         // Ground check up front so we can grab the surface normal (needed to climb ramps).
         RaycastHit groundHit;
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, out groundHit, 2.0f);
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, out groundHit, 0.25f);
 
         // 2. Calculate movement direction relative to where the CAMERA is looking
         Vector3 moveDirection = (camForward * movementY) + (camRight * movementX);
@@ -105,6 +105,7 @@ public class PlayerController : MonoBehaviour
             jumpsRemaining = maxJumps;
 
         Vector2 moveValue = moveAction.ReadValue<Vector2>();
+        Debug.Log(moveValue);
 
         anim.SetFloat("Pos X", moveValue.x);
         anim.SetFloat("Pos Y", moveValue.y);
