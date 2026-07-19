@@ -41,6 +41,8 @@ public class PlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         moveAction = playerInput.actions["Move"];
         leprechaunAudio = GetComponent<LeprechaunPlayerAudio>();
+        mouseX = transform.eulerAngles.y;
+        mouseY = 0f;
     }
 
     void OnLook(InputValue lookValue)
