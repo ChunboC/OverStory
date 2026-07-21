@@ -6,7 +6,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviour
 {
-    public enum AIState { Idle, Evade, DropObstacle, Jump, Escaped, Laugh }
+    public enum AIState { Idle, Evade, Jump, Escaped, Laugh } // Removed DropObstacle
     public GameManager gameManager;
     
     [Header("AI State & Core Targets")]
@@ -24,14 +24,15 @@ public class EnemyAI : MonoBehaviour
     public float recalculatePathDistance = 2.5f;
 
     [Header("Game Loop Timer")]
-    public float survivalTimeRequired = 60f; // 1 minute evasion phase
+    public float survivalTimeRequired = 45f; 
     private float currentSurvivalTime = 0f;
     private bool isMakingFinalDash = false;
 
     [Header("Tactical Spawning")]
     public GameObject slimePrefab;
     public Transform dropPoint; 
-    public float obstacleCooldown = 4.0f;
+    public float obstacleCooldown = 4.0f; 
+    public float periodicDropCooldown = 8.0f; 
     private float lastDropTime = 0f;
 
     [Header("Movement & Animation")]
@@ -54,9 +55,7 @@ public class EnemyAI : MonoBehaviour
         trollAudio = GetComponent<TrollAudio>();
         
         agent.autoTraverseOffMeshLink = true; 
-        
         agent.autoBraking = false; 
-
         agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance; 
         
         normalSpeedCache = normalSpeed;
@@ -96,9 +95,6 @@ public class EnemyAI : MonoBehaviour
                 HandleEvasion();
                 HandleTacticalDrops();
                 break;
-            case AIState.DropObstacle:
-                // Handled via Coroutine
-                break;
             case AIState.Jump: 
                 if (anim) anim.SetBool("IsRunning", false);
                 ResetWaddleOrientation();
@@ -113,54 +109,48 @@ public class EnemyAI : MonoBehaviour
 
     private void HandleEvasion()
     {
-        if (isJumping || isDroppingObstacle) return;
+        if (isJumping) return; // Allowed to evade while dropping obstacle
         if (anim) anim.SetBool("IsRunning", true);
 
         ApplyProceduralWaddle();
 
-        // 1. Process Timer
         if (!isMakingFinalDash)
         {
             currentSurvivalTime += Time.deltaTime;
             if (currentSurvivalTime >= survivalTimeRequired)
             {
                 isMakingFinalDash = true;
-                Debug.Log("<color=magenta>[AI PHASE SHIFT]</color> 60 seconds elapsed! Troll dashing to Beanstalk.");
+                Debug.Log("<color=magenta>[AI PHASE SHIFT]</color> 45 seconds elapsed! Troll dashing to Beanstalk.");
             }
         }
 
         float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
         
-        // 2. Dynamic Speed Scaling
         if (!isSlowed)
         {
             agent.speed = distanceToPlayer < 12f ? panicSpeed : normalSpeed;
         }
 
-        // 3. Tactical Path Selection
         if (!agent.pathPending && agent.remainingDistance < recalculatePathDistance)
         {
             Vector3 bestTarget;
             
             if (isMakingFinalDash)
             {
-                // Final Phase: B-line for the Beanstalk
                 Vector3 dirToBeanstalk = (beanstalkDestination.position - transform.position).normalized;
                 Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
                 
-                // Smart Routing: If player is standing directly between Troll and Beanstalk, dodge around them
                 if (Vector3.Dot(dirToBeanstalk, dirToPlayer) > 0.6f && distanceToPlayer < 8f) 
                 {
                     bestTarget = CalculateBestEvasionPoint(); 
                 }
                 else
                 {
-                    bestTarget = beanstalkDestination.position; // Path is clear, go to goal
+                    bestTarget = beanstalkDestination.position; 
                 }
             }
             else
             {
-                // First 60 Seconds: Pure Evasion regardless of distance
                 bestTarget = CalculateBestEvasionPoint();
             }
 
@@ -169,72 +159,66 @@ public class EnemyAI : MonoBehaviour
     }
 
     private Vector3 CalculateBestEvasionPoint()
-{
-    Vector3 bestPoint = transform.position;
-    float highestScore = -Mathf.Infinity;
-
-    // Create an empty path to test our routes
-    NavMeshPath testPath = new NavMeshPath(); 
-
-    for (int i = 0; i < samplePoints; i++)
     {
-        Vector2 randomDir = Random.insideUnitCircle.normalized * fleeRadius;
-        Vector3 samplePos = transform.position + new Vector3(randomDir.x, 0, randomDir.y);
+        Vector3 bestPoint = transform.position;
+        float highestScore = -Mathf.Infinity;
 
-        NavMeshHit hit;
-        // Sample the NavMesh to find the closest valid surface
-        if (NavMesh.SamplePosition(samplePos, out hit, 4f, NavMesh.AllAreas))
+        NavMeshPath testPath = new NavMeshPath(); 
+
+        for (int i = 0; i < samplePoints; i++)
         {
-            // NEW: Calculate a path to the sampled point
-            agent.CalculatePath(hit.position, testPath);
-            
-            // NEW: Only evaluate the point if the path is complete (no walls blocking it)
-            if (testPath.status == NavMeshPathStatus.PathComplete)
+            Vector2 randomDir = Random.insideUnitCircle.normalized * fleeRadius;
+            Vector3 samplePos = transform.position + new Vector3(randomDir.x, 0, randomDir.y);
+
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(samplePos, out hit, 4f, NavMesh.AllAreas))
             {
-                float score = EvaluatePosition(hit.position);
-                if (score > highestScore)
+                agent.CalculatePath(hit.position, testPath);
+                
+                if (testPath.status == NavMeshPathStatus.PathComplete)
                 {
-                    highestScore = score;
-                    bestPoint = hit.position;
+                    float score = EvaluatePosition(hit.position);
+                    if (score > highestScore)
+                    {
+                        highestScore = score;
+                        bestPoint = hit.position;
+                    }
                 }
             }
         }
+        return bestPoint;
     }
-    return bestPoint;
-}
 
     private float EvaluatePosition(Vector3 candidatePos)
-{
-    float score = 0;
-    float distToPlayer = Vector3.Distance(candidatePos, playerTransform.position);
-    float distToGoal = Vector3.Distance(candidatePos, beanstalkDestination.position);
-    float currentDistToPlayer = Vector3.Distance(transform.position, playerTransform.position);
-
-    // INSTANT REJECTION: If this point moves us closer to the player, penalize it heavily
-    if (distToPlayer < currentDistToPlayer)
     {
-        score -= 1000f; 
+        float score = 0;
+        float distToPlayer = Vector3.Distance(candidatePos, playerTransform.position);
+        float distToGoal = Vector3.Distance(candidatePos, beanstalkDestination.position);
+        float currentDistToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+
+        if (distToPlayer < currentDistToPlayer)
+        {
+            score -= 1000f; 
+        }
+
+        score += distToPlayer * 2.5f; 
+        score -= distToGoal * 1.0f;   
+
+        return score;
     }
-
-    // Core AI Heuristic
-    score += distToPlayer * 2.5f; 
-    score -= distToGoal * 1.0f;   
-
-    return score;
-}
 
     private void HandleTacticalDrops()
     {
         if (Time.time < lastDropTime + obstacleCooldown || isJumping || isDroppingObstacle) return;
 
-        // Tactical Trap Logic: Drop slime if player is directly behind us and close
         Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
         float dotProduct = Vector3.Dot(transform.forward, dirToPlayer);
 
-        // -1 is perfectly behind, 1 is perfectly in front
-        if (dotProduct < -0.6f && Vector3.Distance(transform.position, playerTransform.position) < 14f)
+        bool playerIsCloseBehind = (dotProduct < -0.6f && Vector3.Distance(transform.position, playerTransform.position) < 14f);
+        bool periodicDropReady = (Time.time >= lastDropTime + periodicDropCooldown);
+
+        if (playerIsCloseBehind || periodicDropReady)
         {
-            currentState = AIState.DropObstacle;
             StartCoroutine(PerformDropObstacleSequence());
         }
     }
@@ -243,7 +227,6 @@ public class EnemyAI : MonoBehaviour
     {
         isDroppingObstacle = true;
         lastDropTime = Time.time;
-        agent.isStopped = true;
 
         if (anim != null) anim.SetTrigger("Attack"); 
         
@@ -251,12 +234,7 @@ public class EnemyAI : MonoBehaviour
 
         yield return new WaitForSeconds(1.2f);
         
-        agent.isStopped = false;
         isDroppingObstacle = false;
-        currentState = AIState.Evade;
-        
-        // Force immediate recalculation to run away
-        agent.SetDestination(CalculateBestEvasionPoint()); 
     }
 
     void SpawnSlimePuddle()
@@ -266,7 +244,6 @@ public class EnemyAI : MonoBehaviour
             Vector3 basePos = dropPoint != null ? dropPoint.position : (transform.position - transform.forward * 2.5f);
             Vector3 spawnPosition = basePos;
             
-            // Check for walls to prevent AI from getting stuck
             Collider[] hits = Physics.OverlapSphere(basePos, 1.5f, LayerMask.GetMask("Building"));
             if (hits.Length > 0)
             {
@@ -354,7 +331,6 @@ public class EnemyAI : MonoBehaviour
         
         if (gameManager != null)
         {
-            // Assuming you have a LoseGame() method in your GameManager
             gameManager.LoseGame(); 
         }
     }
