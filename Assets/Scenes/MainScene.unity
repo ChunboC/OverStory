@@ -20812,10 +20812,10 @@ MonoBehaviour:
   playerTransform: {fileID: 1176345718}
   playerRb: {fileID: 1176345719}
   timeBetweenStorms: 18
-  stormDuration: 4.5
+  stormDuration: 6
   stormWarningTime: 3
   rainEffect: {fileID: 1597824044}
-  windForce: 25
+  windForce: 35
   lightningWarningPrefab: {fileID: 5627696518775099638, guid: 6839a8d6998e86d4282063ffdacb0c15, type: 3}
   lightningStrikePrefab: {fileID: 5627696518775099638, guid: 6839a8d6998e86d4282063ffdacb0c15, type: 3}
   knockbackForce: 45
