@@ -1003,6 +1003,39 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 118586753}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &131070085
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 131070086}
+  m_Layer: 7
+  m_Name: Visuals
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &131070086
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131070085}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6707588378071221977}
+  - {fileID: 5472622939981306455}
+  m_Father: {fileID: 543450652563449801}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &136785231
 GameObject:
   m_ObjectHideFlags: 0
@@ -10211,8 +10244,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1100051995}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.085618086, y: 0.89756083, z: -0.20054598, w: 0.38319105}
-  m_LocalPosition: {x: -4.2724676, y: 3.2590532, z: 4.5602565}
+  m_LocalRotation: {x: 0, y: 0.9732491, z: -0.2297529, w: 0}
+  m_LocalPosition: {x: -0.1544609, y: 3.5481243, z: 7.89}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11541,24 +11574,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentState: 0
   playerTransform: {fileID: 1176345718}
-  detectionRange: 15
-  waypoints:
-  - {fileID: 1350010648}
-  - {fileID: 435992395}
-  - {fileID: 2011798004}
-  - {fileID: 510795189}
-  - {fileID: 1432797177}
-  - {fileID: 1523850009}
   beanstalkDestination: {fileID: 1898401563}
-  escapeSpeedMultiplier: 1.35
+  fleeRadius: 15
+  safeDistance: 20
+  samplePoints: 16
+  recalculatePathDistance: 5
   slimePrefab: {fileID: 3450760242328152523, guid: d11adf248e8224c2a97572c236eb436a, type: 3}
   dropPoint: {fileID: 0}
-  spawnInterval: 3
-  minimumSpawnInterval: 1.2
-  proximityPanicDistance: 12
-  waddleSpeed: 10
-  tiltIntensity: 18
-  visualMeshTransform: {fileID: 5472622939981306455}
+  obstacleCooldown: 4
+  normalSpeed: 12
+  panicSpeed: 14
+  waddleSpeed: 5
+  tiltIntensity: 5
+  visualMeshTransform: {fileID: 131070086}
 --- !u!195 &1277113982
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -21765,12 +21793,11 @@ Transform:
   m_GameObject: {fileID: 919132148018969971}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.18, z: 6.63}
+  m_LocalPosition: {x: 0, y: -0.191, z: 6.63}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6707588378071221977}
-  - {fileID: 5472622939981306455}
+  - {fileID: 131070086}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &602609422138465964
@@ -23150,14 +23177,14 @@ Transform:
   m_GameObject: {fileID: 1664083764819050840}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000009449865, y: 0.0000007391643, z: 0.000014899338, w: 1}
-  m_LocalPosition: {x: -0, y: 0.593, z: -0.002090454}
+  m_LocalPosition: {x: 0, y: 0.59300005, z: -0.002090454}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 512122150977833372}
   - {fileID: 141009829403856434}
   - {fileID: 1017971967056902014}
-  m_Father: {fileID: 543450652563449801}
+  m_Father: {fileID: 131070086}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &5483348263061002052
 Transform:
@@ -23548,7 +23575,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 543450652563449801}
+  m_Father: {fileID: 131070086}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6866456199236684158
 GameObject:
