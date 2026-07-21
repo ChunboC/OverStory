@@ -10244,8 +10244,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1100051995}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.9732491, z: -0.2297529, w: 0}
-  m_LocalPosition: {x: -0.1544609, y: 3.5481243, z: 7.89}
+  m_LocalRotation: {x: 0.085618086, y: 0.89756083, z: -0.20054598, w: 0.38319105}
+  m_LocalPosition: {x: -4.2724676, y: 3.2590532, z: 4.5602565}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11572,6 +11572,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7165dfb31c10b465d9e8bb7fb7eb1199, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
   currentState: 0
   playerTransform: {fileID: 1176345718}
   beanstalkDestination: {fileID: 1898401563}
@@ -11579,6 +11580,7 @@ MonoBehaviour:
   safeDistance: 20
   samplePoints: 16
   recalculatePathDistance: 5
+  survivalTimeRequired: 60
   slimePrefab: {fileID: 3450760242328152523, guid: d11adf248e8224c2a97572c236eb436a, type: 3}
   dropPoint: {fileID: 0}
   obstacleCooldown: 4
@@ -21052,6 +21054,59 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2083607141}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2090874710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2090874712}
+  - component: {fileID: 2090874711}
+  m_Layer: 0
+  m_Name: WeatherManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2090874711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2090874710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1851adee3cf4436ba0b9c5cccfab49d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTransform: {fileID: 1176345718}
+  playerRb: {fileID: 1176345719}
+  lightningWarningPrefab: {fileID: 5627696518775099638, guid: 6839a8d6998e86d4282063ffdacb0c15, type: 3}
+  lightningStrikePrefab: {fileID: 5627696518775099638, guid: 6839a8d6998e86d4282063ffdacb0c15, type: 3}
+  knockbackForce: 100
+  rainParticles: {fileID: 0}
+  squallCooldown: 18
+  squallDuration: 4
+  windForce: 25
+--- !u!4 &2090874712
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2090874710}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.6824289, y: 1.1072947, z: 6.728261}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2099559884
 GameObject:
   m_ObjectHideFlags: 0
@@ -24150,3 +24205,4 @@ SceneRoots:
   - {fileID: 1587998276}
   - {fileID: 2025140232}
   - {fileID: 2027446936}
+  - {fileID: 2090874712}

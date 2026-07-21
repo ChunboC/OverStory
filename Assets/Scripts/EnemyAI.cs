@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class EnemyAI : MonoBehaviour
 {
     public enum AIState { Idle, Evade, DropObstacle, Jump, Escaped, Laugh }
+    public GameManager gameManager;
     
     [Header("AI State & Core Targets")]
     public AIState currentState = AIState.Idle;
@@ -21,6 +22,11 @@ public class EnemyAI : MonoBehaviour
     public float safeDistance = 20f; 
     public int samplePoints = 8; 
     public float recalculatePathDistance = 2.5f;
+
+    [Header("Game Loop Timer")]
+    public float survivalTimeRequired = 60f; // 1 minute evasion phase
+    private float currentSurvivalTime = 0f;
+    private bool isMakingFinalDash = false;
 
     [Header("Tactical Spawning")]
     public GameObject slimePrefab;
@@ -106,47 +112,61 @@ public class EnemyAI : MonoBehaviour
     }
 
     private void HandleEvasion()
-{
-    if (isJumping || isDroppingObstacle) return;
-    if (anim) anim.SetBool("IsRunning", true);
-
-    ApplyProceduralWaddle();
-
-    float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
-    
-    if (!isSlowed)
     {
-        agent.speed = distanceToPlayer < 12f ? panicSpeed : normalSpeed;
-    }
+        if (isJumping || isDroppingObstacle) return;
+        if (anim) anim.SetBool("IsRunning", true);
 
-    if (!agent.pathPending && agent.remainingDistance < recalculatePathDistance)
-    {
-        Vector3 bestTarget;
-        
-        if (distanceToPlayer > safeDistance)
+        ApplyProceduralWaddle();
+
+        // 1. Process Timer
+        if (!isMakingFinalDash)
         {
-            // Calculate directions
-            Vector3 dirToBeanstalk = (beanstalkDestination.position - transform.position).normalized;
-            Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
-            
-            // Check if player is directly in the path to the beanstalk (Dot > 0.5 means they are in front)
-            if (Vector3.Dot(dirToBeanstalk, dirToPlayer) < 0.5f) 
+            currentSurvivalTime += Time.deltaTime;
+            if (currentSurvivalTime >= survivalTimeRequired)
             {
-                bestTarget = beanstalkDestination.position; // Path is clear
+                isMakingFinalDash = true;
+                Debug.Log("<color=magenta>[AI PHASE SHIFT]</color> 60 seconds elapsed! Troll dashing to Beanstalk.");
+            }
+        }
+
+        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+        
+        // 2. Dynamic Speed Scaling
+        if (!isSlowed)
+        {
+            agent.speed = distanceToPlayer < 12f ? panicSpeed : normalSpeed;
+        }
+
+        // 3. Tactical Path Selection
+        if (!agent.pathPending && agent.remainingDistance < recalculatePathDistance)
+        {
+            Vector3 bestTarget;
+            
+            if (isMakingFinalDash)
+            {
+                // Final Phase: B-line for the Beanstalk
+                Vector3 dirToBeanstalk = (beanstalkDestination.position - transform.position).normalized;
+                Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
+                
+                // Smart Routing: If player is standing directly between Troll and Beanstalk, dodge around them
+                if (Vector3.Dot(dirToBeanstalk, dirToPlayer) > 0.6f && distanceToPlayer < 8f) 
+                {
+                    bestTarget = CalculateBestEvasionPoint(); 
+                }
+                else
+                {
+                    bestTarget = beanstalkDestination.position; // Path is clear, go to goal
+                }
             }
             else
             {
-                bestTarget = CalculateBestEvasionPoint(); // Player is blocking, evade instead
+                // First 60 Seconds: Pure Evasion regardless of distance
+                bestTarget = CalculateBestEvasionPoint();
             }
-        }
-        else
-        {
-            bestTarget = CalculateBestEvasionPoint();
-        }
 
-        agent.SetDestination(bestTarget);
+            agent.SetDestination(bestTarget);
+        }
     }
-}
 
     private Vector3 CalculateBestEvasionPoint()
 {
@@ -331,7 +351,12 @@ public class EnemyAI : MonoBehaviour
     {
         currentState = AIState.Laugh;
         if (anim) { anim.SetBool("IsRunning", false); anim.SetTrigger("Laugh"); }
-        Debug.Log("<color=red>[GAME OVER]</color> Troll reached the destination! Player loses the game.");
+        
+        if (gameManager != null)
+        {
+            // Assuming you have a LoseGame() method in your GameManager
+            gameManager.LoseGame(); 
+        }
     }
 
     public void ApplySlow(float slowPercentage, float duration)
