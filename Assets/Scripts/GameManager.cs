@@ -7,7 +7,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     [Header("Timer Settings")]
-    public float timeRemaining = 60f;
+    public float timeRemaining = 90f;
     public TMP_Text timerText;
     public TMP_Text shamrockText;
 
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
     private bool isPaused;
     private bool gameOver = false;
     private bool isIntroPlaying = false;
-    private bool gamePlaying = false;
+    public bool gamePlaying = false;
 
     void Start()
     {
