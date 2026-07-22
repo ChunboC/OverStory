@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
     private bool isPaused;
     private bool gameOver = false;
     private bool isIntroPlaying = false;
+    private bool gamePlaying = false;
 
     void Start()
     {
@@ -93,6 +94,7 @@ public class GameManager : MonoBehaviour
     private void StartGameplay()
     {
         isIntroPlaying = false;
+        gamePlaying = true;
 
         if (playerGameObject != null)
         {
@@ -187,6 +189,7 @@ public class GameManager : MonoBehaviour
 
     public void MainMenu()
     {
+        gamePlaying = false;
         SceneManager.LoadScene("StartMenu");
     }
 
@@ -215,7 +218,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (isIntroPlaying || gameOver) return;
+        if (isIntroPlaying || gameOver || !gamePlaying) return;
 
         timeRemaining -= Time.deltaTime;
 
@@ -271,6 +274,7 @@ public class GameManager : MonoBehaviour
         if (gameOver) return;
 
         gameOver = true;
+        gamePlaying = false;
         if (playerInput != null)
         {
             playerInput.SwitchCurrentActionMap("UI");
@@ -289,6 +293,7 @@ public class GameManager : MonoBehaviour
         if (gameOver) return;
 
         gameOver = true;
+        gamePlaying = false;
         if (playerInput != null)
         {
             playerInput.SwitchCurrentActionMap("UI");
