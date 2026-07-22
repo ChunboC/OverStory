@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
 
     private bool isPaused;
     private bool gameOver = false;
-    private bool isIntroPlaying = false;
+    public bool isIntroPlaying = false;
 
     void Start()
     {

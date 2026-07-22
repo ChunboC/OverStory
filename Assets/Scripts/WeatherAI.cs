@@ -3,13 +3,16 @@ using System.Collections;
 
 public class WeatherAI : MonoBehaviour
 {
+    [Header("System Dependencies")]
+    public GameManager gameManager;
+
     [Header("Targeting & Prediction")]
     public Transform playerTransform;
     public Rigidbody playerRb; 
     
     [Header("Storm Settings (Occasional)")]
-    public float timeBetweenStorms = 18f; // Happens slightly more frequently
-    public float stormDuration = 3.5f;    // Shortened to just a couple seconds
+    public float timeBetweenStorms = 18f; 
+    public float stormDuration = 3.5f;    
     public float stormWarningTime = 3f; 
     
     public GameObject rainEffect; 
@@ -36,6 +39,12 @@ public class WeatherAI : MonoBehaviour
 
     void Start()
     {
+        // Auto-assign GameManager if empty
+        if (gameManager == null)
+        {
+            gameManager = FindFirstObjectByType<GameManager>();
+        }
+
         if (playerTransform == null)
         {
             GameObject player = GameObject.FindWithTag("Player");
@@ -45,6 +54,7 @@ public class WeatherAI : MonoBehaviour
                 playerRb = player.GetComponent<Rigidbody>();
             }
         }
+        
         nextStormTime = Time.time + timeBetweenStorms;
         nextStrikeTime = Time.time + Random.Range(minStrikeCooldown, maxStrikeCooldown);
 
@@ -53,6 +63,14 @@ public class WeatherAI : MonoBehaviour
 
     void Update()
     {
+        // Prevent weather and timers from running during the intro cutscene
+        if (gameManager != null && gameManager.isIntroPlaying)
+        {
+            nextStormTime = Time.time + timeBetweenStorms;
+            nextStrikeTime = Time.time + Random.Range(minStrikeCooldown, maxStrikeCooldown);
+            return; 
+        }
+
         timeElapsed += Time.deltaTime;
         UpdateDifficultyPhase();
 
