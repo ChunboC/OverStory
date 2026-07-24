@@ -255,6 +255,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1946337145}
     m_Modifications:
+    - target: {fileID: 2289215394670921245, guid: 91f5fbb74ea01ed4e9e88547ee338322, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2550865356708926082, guid: 91f5fbb74ea01ed4e9e88547ee338322, type: 3}
       propertyPath: m_LocalPosition.z
       value: -1.5
@@ -2089,7 +2093,7 @@ Rigidbody:
   m_GameObject: {fileID: 252407616}
   serializedVersion: 4
   m_Mass: 3
-  m_Drag: 3
+  m_Drag: 0
   m_AngularDrag: 0.25
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -2104,9 +2108,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &252407624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2119,10 +2123,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0684347ce3e64644a97063fa20d3a811, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 80
+  groundCheckDelayAfterJump: 0.1
+  speed: 5
   turnSpeed: 10
-  jumpForce: 20
-  maxJumps: 1
+  jumpForce: 16
+  maxJumps: 2
+  groundAcceleration: 35
+  airAcceleration: 7
+  fallGravityMultiplier: 1.5
   cameraPivot: {fileID: 862383094}
   mouseSensitivity: 0.1
   upperLookLimit: 80
@@ -4680,6 +4688,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1946337145}
     m_Modifications:
+    - target: {fileID: 2289215394670921245, guid: 91f5fbb74ea01ed4e9e88547ee338322, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2550865356708926082, guid: 91f5fbb74ea01ed4e9e88547ee338322, type: 3}
       propertyPath: m_LocalPosition.z
       value: -2
@@ -8581,6 +8593,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1946337145}
     m_Modifications:
+    - target: {fileID: 2289215394670921245, guid: 91f5fbb74ea01ed4e9e88547ee338322, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2550865356708926082, guid: 91f5fbb74ea01ed4e9e88547ee338322, type: 3}
       propertyPath: m_LocalPosition.z
       value: -1
@@ -9067,6 +9083,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1946337145}
     m_Modifications:
+    - target: {fileID: 2289215394670921245, guid: 91f5fbb74ea01ed4e9e88547ee338322, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2550865356708926082, guid: 91f5fbb74ea01ed4e9e88547ee338322, type: 3}
       propertyPath: m_LocalPosition.z
       value: -0.5
@@ -13567,6 +13587,10 @@ PrefabInstance:
     - target: {fileID: 822011190338315647, guid: 91f5fbb74ea01ed4e9e88547ee338322, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2289215394670921245, guid: 91f5fbb74ea01ed4e9e88547ee338322, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3950641789933232962, guid: 91f5fbb74ea01ed4e9e88547ee338322, type: 3}
       propertyPath: m_LocalPosition.x
