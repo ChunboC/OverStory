@@ -2124,17 +2124,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   groundCheckDelayAfterJump: 0.1
-  speed: 5
-  turnSpeed: 10
-  jumpForce: 16
+  speed: 4
+  turnSpeed: 4
+  jumpForce: 15
   maxJumps: 2
   groundAcceleration: 35
-  airAcceleration: 7
+  airAcceleration: 5
   fallGravityMultiplier: 1.5
+  airDashSpeed: 6
+  airDashDuration: 0.1
   cameraPivot: {fileID: 862383094}
   mouseSensitivity: 0.1
   upperLookLimit: 80
   lowerLookLimit: -40
+  controllerLookSpeed: 100
+  rightStickDeadZone: 0.15
   gameManager: {fileID: 1859789523}
 --- !u!4 &252407625
 Transform:
@@ -10697,7 +10701,7 @@ Transform:
   m_GameObject: {fileID: 1751334992}
   serializedVersion: 2
   m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
-  m_LocalPosition: {x: 0, y: 5, z: -7.5}
+  m_LocalPosition: {x: 0, y: 4, z: -7.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

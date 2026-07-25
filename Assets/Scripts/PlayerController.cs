@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,6 +15,13 @@ public class PlayerController : MonoBehaviour
     private bool wasGrounded;
     private float lastJumpTime;
 
+
+    private static readonly int JumpState =
+        Animator.StringToHash("Base Layer.jump");
+
+    private static readonly int DashState =
+        Animator.StringToHash("Base Layer.Dash");
+
     public float groundCheckDelayAfterJump = 0.1f;
 
     public float speed = 5f;
@@ -26,11 +34,21 @@ public class PlayerController : MonoBehaviour
     public float airAcceleration = 8f;
     public float fallGravityMultiplier = 2.5f;
 
-    public Transform cameraPivot;
+    [Header("Air Dash")]
+    public float airDashSpeed = 16f;
+    public float airDashDuration = 0.18f;
 
+    private bool airDashAvailable = true;
+    private bool isAirDashing = false;
+    
+
+    [Header("Camera Control")]
+    public Transform cameraPivot;
     public float mouseSensitivity = 0.1f;
     public float upperLookLimit = 80f;  // Max angle looking up
     public float lowerLookLimit = -40f; // Max angle looking down
+    public float controllerLookSpeed = 160f;
+    public float rightStickDeadZone = 0.15f;
 
     [Header("Game Manager")]
     public GameManager gameManager;
@@ -38,6 +56,7 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
     private PlayerInput playerInput;
     private InputAction moveAction;
+    private InputAction lookAction;
     private LeprechaunPlayerAudio leprechaunAudio;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -48,20 +67,55 @@ public class PlayerController : MonoBehaviour
         anim = GetComponent<Animator>();
         playerInput = GetComponent<PlayerInput>();
         moveAction = playerInput.actions["Move"];
+        lookAction = playerInput.actions["Look"];
         leprechaunAudio = GetComponent<LeprechaunPlayerAudio>();
         mouseX = transform.eulerAngles.y;
         mouseY = 0f;
         jumpsRemaining = maxJumps;
     }
 
-    void OnLook(InputValue lookValue)
+    void LateUpdate()
     {
-        Vector2 lookVector = lookValue.Get<Vector2>();
-        
-        mouseX += lookVector.x * mouseSensitivity;
-        mouseY -= lookVector.y * mouseSensitivity;
+        Vector2 lookValue = lookAction.ReadValue<Vector2>();
 
-        mouseY = Mathf.Clamp(mouseY, lowerLookLimit, upperLookLimit); // Clamp up/down looking so the camera doesn't flip upside down
+        bool usingGamepad =
+            lookAction.activeControl?.device is Gamepad;
+
+        if (usingGamepad)
+        {
+            // Right stick controls the camera.
+            if (lookValue.sqrMagnitude >
+                rightStickDeadZone * rightStickDeadZone)
+            {
+                mouseX +=
+                    lookValue.x *
+                    controllerLookSpeed *
+                    Time.deltaTime;
+
+                mouseY -=
+                    lookValue.y *
+                    controllerLookSpeed *
+                    Time.deltaTime;
+            }
+        }
+        else
+        {
+            // Mouse controls the camera when using keyboard and mouse.
+            mouseX += lookValue.x * mouseSensitivity;
+            mouseY -= lookValue.y * mouseSensitivity;
+        }
+
+        mouseY = Mathf.Clamp(
+            mouseY,
+            lowerLookLimit,
+            upperLookLimit
+        );
+
+        cameraPivot.rotation = Quaternion.Euler(
+            mouseY,
+            mouseX,
+            0f
+        );
     }
 
 
@@ -92,12 +146,30 @@ public class PlayerController : MonoBehaviour
 
         // Ground check.
         RaycastHit groundHit;
+
         isGrounded = Physics.Raycast(
             transform.position,
             Vector3.down,
             out groundHit,
             0.25f
         );
+
+        bool animatorGrounded =
+            isGrounded &&
+            Time.time - lastJumpTime > 0.1f;
+
+        anim.SetBool("IsGrounded", animatorGrounded);
+
+        if (isGrounded && !isAirDashing)
+        {
+            airDashAvailable = true;
+        }
+
+        if (isAirDashing)
+        {
+            return;
+        }
+
 
         // Get moving-platform velocity.
         Vector3 platformVelocity = Vector3.zero;
@@ -116,6 +188,10 @@ public class PlayerController : MonoBehaviour
         Vector3 moveDirection =
             (camForward * movementY) +
             (camRight * movementX);
+
+        // How far the left stick is tilted.
+        // 0 = no movement, 1 = fully tilted.
+        float inputMagnitude = Mathf.Clamp01(moveDirection.magnitude);
 
         Vector3 appliedDirection = moveDirection.normalized;
 
@@ -150,10 +226,12 @@ public class PlayerController : MonoBehaviour
 
             if (moveDirection.sqrMagnitude > 0.01f)
             {
+                // Slight stick tilt gives walking speed.
+                // Full stick tilt gives running speed.
                 Vector3 desiredRelativeVelocity = new Vector3(
-                    appliedDirection.x * speed,
+                    appliedDirection.x * speed * inputMagnitude,
                     0f,
-                    appliedDirection.z * speed
+                    appliedDirection.z * speed * inputMagnitude
                 );
 
                 nextRelativeVelocity = Vector3.MoveTowards(
@@ -178,8 +256,8 @@ public class PlayerController : MonoBehaviour
         }
         else if (moveDirection.sqrMagnitude > 0.01f)
         {
-            Vector3 desiredAirVelocity =
-                moveDirection.normalized * speed;
+            Vector3 desiredAirVelocity = 
+                moveDirection.normalized * speed * inputMagnitude;
 
             Vector3 nextAirVelocity = Vector3.MoveTowards(
                 currentHorizontalVelocity,
@@ -235,28 +313,91 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("Pos Y", moveValue.y);
     }
 
-    void LateUpdate()
-    {    
-        cameraPivot.rotation = Quaternion.Euler(mouseY, mouseX, 0f); // Rotate the pivot based on mouse inputs. This keeps camera looking independent of player body!
-    }
-
     void OnJump()
     {
         if (jumpsRemaining <= 0) return;
 
         lastJumpTime = Time.time;
+        isGrounded = false;
+        anim.SetBool("IsGrounded", false);
+
+        // Directly start the Jump state.
+        // Calling this again restarts it for the second jump.
+        anim.Play(JumpState, 0, 0f);
 
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         jumpsRemaining--;
 
         // Prevent the ground check from treating takeoff as a landing.
-        isGrounded = false;
+        
 
         if (leprechaunAudio != null)
         {
             leprechaunAudio.PlayJump();
         }
+    }
+
+    void OnDash(InputValue value)
+    {
+        if (!value.isPressed)
+            return;
+
+        // Dash is only allowed while airborne.
+        if (isGrounded)
+            return;
+
+        // Only one dash is allowed before landing.
+        if (!airDashAvailable || isAirDashing)
+            return;
+
+        Vector3 dashDirection =
+            (cameraPivot.forward * movementY) +
+            (cameraPivot.right * movementX);
+
+        // Keep the dash horizontal.
+        dashDirection.y = 0f;
+
+        // Dash forward when there is no movement input.
+        if (dashDirection.sqrMagnitude < 0.01f)
+        {
+            dashDirection = transform.forward;
+            dashDirection.y = 0f;
+        }
+
+        dashDirection.Normalize();
+
+        StartCoroutine(AirDashRoutine(dashDirection));
+
+    }
+
+    private IEnumerator AirDashRoutine(Vector3 dashDirection)
+    {
+        isAirDashing = true;
+        airDashAvailable = false;
+
+        anim.CrossFade(DashState, 0.05f, 0, 0f);
+
+        bool originalUseGravity = rb.useGravity;
+
+        // Prevent the player from falling during the short dash.
+        rb.useGravity = false;
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < airDashDuration && !isGrounded)
+        {
+            rb.linearVelocity =
+                dashDirection * airDashSpeed;
+
+            elapsedTime += Time.fixedDeltaTime;
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        rb.useGravity = originalUseGravity;
+        isAirDashing = false;
+
     }
 
     private void OnCollisionEnter(Collision collision)
