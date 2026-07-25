@@ -32,12 +32,17 @@ public class PlayerController : MonoBehaviour
     public float upperLookLimit = 80f;  // Max angle looking up
     public float lowerLookLimit = -40f; // Max angle looking down
 
+    [Header("Camera Control")]
+    public float controllerLookSpeed = 160f;
+    public float rightStickDeadZone = 0.15f;
+
     [Header("Game Manager")]
     public GameManager gameManager;
 
     private Animator anim;
     private PlayerInput playerInput;
     private InputAction moveAction;
+    private InputAction lookAction;
     private LeprechaunPlayerAudio leprechaunAudio;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -48,20 +53,55 @@ public class PlayerController : MonoBehaviour
         anim = GetComponent<Animator>();
         playerInput = GetComponent<PlayerInput>();
         moveAction = playerInput.actions["Move"];
+        lookAction = playerInput.actions["Look"];
         leprechaunAudio = GetComponent<LeprechaunPlayerAudio>();
         mouseX = transform.eulerAngles.y;
         mouseY = 0f;
         jumpsRemaining = maxJumps;
     }
 
-    void OnLook(InputValue lookValue)
+    void LateUpdate()
     {
-        Vector2 lookVector = lookValue.Get<Vector2>();
-        
-        mouseX += lookVector.x * mouseSensitivity;
-        mouseY -= lookVector.y * mouseSensitivity;
+        Vector2 lookValue = lookAction.ReadValue<Vector2>();
 
-        mouseY = Mathf.Clamp(mouseY, lowerLookLimit, upperLookLimit); // Clamp up/down looking so the camera doesn't flip upside down
+        bool usingGamepad =
+            lookAction.activeControl?.device is Gamepad;
+
+        if (usingGamepad)
+        {
+            // Right stick controls the camera.
+            if (lookValue.sqrMagnitude >
+                rightStickDeadZone * rightStickDeadZone)
+            {
+                mouseX +=
+                    lookValue.x *
+                    controllerLookSpeed *
+                    Time.deltaTime;
+
+                mouseY -=
+                    lookValue.y *
+                    controllerLookSpeed *
+                    Time.deltaTime;
+            }
+        }
+        else
+        {
+            // Mouse controls the camera when using keyboard and mouse.
+            mouseX += lookValue.x * mouseSensitivity;
+            mouseY -= lookValue.y * mouseSensitivity;
+        }
+
+        mouseY = Mathf.Clamp(
+            mouseY,
+            lowerLookLimit,
+            upperLookLimit
+        );
+
+        cameraPivot.rotation = Quaternion.Euler(
+            mouseY,
+            mouseX,
+            0f
+        );
     }
 
 
@@ -233,11 +273,6 @@ public class PlayerController : MonoBehaviour
 
         anim.SetFloat("Pos X", moveValue.x);
         anim.SetFloat("Pos Y", moveValue.y);
-    }
-
-    void LateUpdate()
-    {    
-        cameraPivot.rotation = Quaternion.Euler(mouseY, mouseX, 0f); // Rotate the pivot based on mouse inputs. This keeps camera looking independent of player body!
     }
 
     void OnJump()
