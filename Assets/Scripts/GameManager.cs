@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using TMPro;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -44,6 +45,11 @@ public class GameManager : MonoBehaviour
     private bool isIntroPlaying = false;
     public bool gamePlaying = false;
 
+    [Header("Fall Penalty Settings")]
+    public TMP_Text penaltyText;
+    public float penaltyTextDuration = 2f;
+    private Coroutine penaltyTextCoroutine;
+
     void Start()
     {
         Time.timeScale = 1f;
@@ -77,6 +83,11 @@ public class GameManager : MonoBehaviour
             isIntroPlaying = true;
             preGameDirector.stopped += OnIntroSequenceFinished;
             preGameDirector.Play();
+        }
+
+        if (penaltyText != null)
+        {
+            penaltyText.gameObject.SetActive(false);
         }
     }
 
@@ -305,5 +316,45 @@ public class GameManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(selectedLoseButton);
         SceneManager.LoadScene("LoseScene");
+    }
+
+    //This function is called when player falls off the map and time is deducted
+    public void DeductTime(float secondsToDeduct)
+    {
+
+        if (isIntroPlaying || gameOver || !gamePlaying) return;
+        
+        timeRemaining -= secondsToDeduct;
+
+        if (timeRemaining <= 0)
+        {
+            timeRemaining = 0;
+            LoseGame();
+        }
+
+        ShowPenaltyWarning($"Fall Penalty:\n-{secondsToDeduct} Seconds!");
+    }
+
+    private void ShowPenaltyWarning(string message)
+    {
+        if (penaltyText == null) return;
+
+        if (penaltyTextCoroutine != null) //Prevent it from having multiple overlapping in case player falls off repeatedly
+        {
+            StopCoroutine(penaltyTextCoroutine);
+        }
+
+        penaltyTextCoroutine = StartCoroutine(DisplayPenaltyRoutine(message));
+    }
+
+    private IEnumerator DisplayPenaltyRoutine(string message)
+    {
+        penaltyText.text = message;
+        penaltyText.color = Color.red;
+        penaltyText.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(penaltyTextDuration);
+
+        penaltyText.gameObject.SetActive(false);
     }
 }
