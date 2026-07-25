@@ -3,11 +3,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using TMPro;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
     [Header("Timer Settings")]
-    public float timeRemaining = 60f;
+    public float timeRemaining = 90f;
     public TMP_Text timerText;
     public TMP_Text shamrockText;
 
@@ -41,7 +42,13 @@ public class GameManager : MonoBehaviour
 
     private bool isPaused;
     private bool gameOver = false;
-    public bool isIntroPlaying = false;
+    private bool isIntroPlaying = false;
+    public bool gamePlaying = false;
+
+    [Header("Fall Penalty Settings")]
+    public TMP_Text penaltyText;
+    public float penaltyTextDuration = 2f;
+    private Coroutine penaltyTextCoroutine;
 
     void Start()
     {
@@ -77,6 +84,11 @@ public class GameManager : MonoBehaviour
             preGameDirector.stopped += OnIntroSequenceFinished;
             preGameDirector.Play();
         }
+
+        if (penaltyText != null)
+        {
+            penaltyText.gameObject.SetActive(false);
+        }
     }
 
     public void StartGame()
@@ -93,6 +105,7 @@ public class GameManager : MonoBehaviour
     private void StartGameplay()
     {
         isIntroPlaying = false;
+        gamePlaying = true;
 
         if (playerGameObject != null)
         {
@@ -187,6 +200,7 @@ public class GameManager : MonoBehaviour
 
     public void MainMenu()
     {
+        gamePlaying = false;
         SceneManager.LoadScene("StartMenu");
     }
 
@@ -215,7 +229,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (isIntroPlaying || gameOver) return;
+        if (isIntroPlaying || gameOver || !gamePlaying) return;
 
         timeRemaining -= Time.deltaTime;
 
@@ -271,6 +285,7 @@ public class GameManager : MonoBehaviour
         if (gameOver) return;
 
         gameOver = true;
+        gamePlaying = false;
         if (playerInput != null)
         {
             playerInput.SwitchCurrentActionMap("UI");
@@ -289,6 +304,7 @@ public class GameManager : MonoBehaviour
         if (gameOver) return;
 
         gameOver = true;
+        gamePlaying = false;
         if (playerInput != null)
         {
             playerInput.SwitchCurrentActionMap("UI");
@@ -300,5 +316,45 @@ public class GameManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(selectedLoseButton);
         SceneManager.LoadScene("LoseScene");
+    }
+
+    //This function is called when player falls off the map and time is deducted
+    public void DeductTime(float secondsToDeduct)
+    {
+
+        if (isIntroPlaying || gameOver || !gamePlaying) return;
+        
+        timeRemaining -= secondsToDeduct;
+
+        if (timeRemaining <= 0)
+        {
+            timeRemaining = 0;
+            LoseGame();
+        }
+
+        ShowPenaltyWarning($"Fall Penalty:\n-{secondsToDeduct} Seconds!");
+    }
+
+    private void ShowPenaltyWarning(string message)
+    {
+        if (penaltyText == null) return;
+
+        if (penaltyTextCoroutine != null) //Prevent it from having multiple overlapping in case player falls off repeatedly
+        {
+            StopCoroutine(penaltyTextCoroutine);
+        }
+
+        penaltyTextCoroutine = StartCoroutine(DisplayPenaltyRoutine(message));
+    }
+
+    private IEnumerator DisplayPenaltyRoutine(string message)
+    {
+        penaltyText.text = message;
+        penaltyText.color = Color.red;
+        penaltyText.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(penaltyTextDuration);
+
+        penaltyText.gameObject.SetActive(false);
     }
 }
