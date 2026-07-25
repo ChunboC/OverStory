@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[DefaultExecutionOrder(-100)]
 [RequireComponent(typeof(Rigidbody))]
 public class KinematicPlatform : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class KinematicPlatform : MonoBehaviour
     private bool _movingToB;
     private float _pauseTimer;
     private bool _paused;
+    public Vector3 CurrentVelocity { get; private set; }
 
     void Awake()
     {
@@ -36,6 +38,8 @@ public class KinematicPlatform : MonoBehaviour
     {
         if (_paused)
         {
+            CurrentVelocity = Vector3.zero;
+
             _pauseTimer -= Time.fixedDeltaTime;
 
             if (_pauseTimer <= 0f)
@@ -48,11 +52,15 @@ public class KinematicPlatform : MonoBehaviour
 
         Vector3 target = _origin + (_movingToB ? pointB : pointA);
 
+        Vector3 currentPosition = _rb.position;
+
         Vector3 nextPosition = Vector3.MoveTowards(
             _rb.position,
             target,
             speed * Time.fixedDeltaTime
         );
+
+        CurrentVelocity = (nextPosition - currentPosition) / Time.fixedDeltaTime;
 
         _rb.MovePosition(nextPosition);
 
