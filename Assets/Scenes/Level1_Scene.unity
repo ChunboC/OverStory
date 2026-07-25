@@ -2124,13 +2124,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   groundCheckDelayAfterJump: 0.1
-  speed: 5
-  turnSpeed: 10
-  jumpForce: 16
+  speed: 4
+  turnSpeed: 4
+  jumpForce: 15
   maxJumps: 2
   groundAcceleration: 35
-  airAcceleration: 7
+  airAcceleration: 5
   fallGravityMultiplier: 1.5
+  airDashSpeed: 6
+  airDashDuration: 0.1
   cameraPivot: {fileID: 862383094}
   mouseSensitivity: 0.1
   upperLookLimit: 80
