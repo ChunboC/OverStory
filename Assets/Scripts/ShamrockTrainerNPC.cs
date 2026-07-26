@@ -28,6 +28,13 @@ public class ShamrockTrainerNPC : MonoBehaviour
     [SerializeField] private GameObject tutorialPanel;
     [SerializeField] private TMP_Text tutorialText;
 
+    [Header("Text Reveal")]
+    [SerializeField] private bool revealWordByWord = false;
+    [SerializeField] private float letterDelay = 0.03f;
+    [SerializeField] private float wordDelay = 0.15f;
+
+    private Coroutine typingRoutine;
+
 
     [TextArea]
     [SerializeField]
@@ -329,19 +336,84 @@ public class ShamrockTrainerNPC : MonoBehaviour
 
     private void ShowMessage(string message)
     {
-        if (tutorialText != null)
-        {
-            tutorialText.text = message;
-        }
-
         if (tutorialPanel != null)
         {
             tutorialPanel.SetActive(true);
         }
+
+        if (tutorialText == null)
+        {
+            return;
+        }
+
+        if (typingRoutine != null)
+        {
+            StopCoroutine(typingRoutine);
+        }
+
+        typingRoutine = StartCoroutine(RevealTextRoutine(message));
+    }
+
+    private IEnumerator RevealTextRoutine(string message)
+    {
+        tutorialText.text = message;
+
+        // Generate TextMeshPro's character and word information.
+        tutorialText.ForceMeshUpdate();
+
+        if (revealWordByWord)
+        {
+            tutorialText.maxVisibleCharacters = int.MaxValue;
+            tutorialText.maxVisibleWords = 0;
+
+            int totalWords = tutorialText.textInfo.wordCount;
+
+            for (int i = 1; i <= totalWords; i++)
+            {
+                tutorialText.maxVisibleWords = i;
+                yield return new WaitForSeconds(wordDelay);
+            }
+        }
+        else
+        {
+            tutorialText.maxVisibleWords = int.MaxValue;
+            tutorialText.maxVisibleCharacters = 0;
+
+            int totalCharacters =
+                tutorialText.textInfo.characterCount;
+
+            for (int i = 1; i <= totalCharacters; i++)
+            {
+                tutorialText.maxVisibleCharacters = i;
+
+                char currentCharacter =
+                    tutorialText.textInfo.characterInfo[i - 1].character;
+
+                // Do not pause for spaces.
+                if (!char.IsWhiteSpace(currentCharacter))
+                {
+                    yield return new WaitForSeconds(letterDelay);
+                }
+            }
+        }
+
+        typingRoutine = null;
     }
 
     private void HideMessage()
     {
+        if (typingRoutine != null)
+        {
+            StopCoroutine(typingRoutine);
+            typingRoutine = null;
+        }
+
+        if (tutorialText != null)
+        {
+            tutorialText.maxVisibleCharacters = int.MaxValue;
+            tutorialText.maxVisibleWords = int.MaxValue;
+        }
+
         if (tutorialPanel != null)
         {
             tutorialPanel.SetActive(false);

@@ -33,6 +33,13 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 50f;
     public int maxJumps = 2;
 
+    [Header("Ability Unlocks")]
+    [SerializeField] private bool doubleJumpUnlocked = false;
+    [SerializeField] private bool airDashUnlocked = false;
+
+    public bool DoubleJumpUnlocked => doubleJumpUnlocked;
+    public bool AirDashUnlocked => airDashUnlocked;
+
     [Header("Movement Control")]
     public float groundAcceleration = 35f;
     public float airAcceleration = 8f;
@@ -122,7 +129,17 @@ public class PlayerController : MonoBehaviour
         );
     }
 
+    public void UnlockDoubleJump()
+    {
+        doubleJumpUnlocked = true;
+        Debug.Log("Double jump unlocked.");
+    }
 
+    public void UnlockAirDash()
+    {
+        airDashUnlocked = true;
+        Debug.Log("Air dash unlocked.");
+    }
 
     void OnMove (InputValue movementValue)
     {
@@ -343,6 +360,19 @@ public class PlayerController : MonoBehaviour
         isGrounded = false;
         anim.SetBool("IsGrounded", false);
 
+        // The first jump starts with all jumps available.
+        // Any jump after that requires the double-jump ability.
+        bool attemptingSecondJump = jumpsRemaining < maxJumps;
+
+        if (attemptingSecondJump && !doubleJumpUnlocked)
+        {
+            return;
+        }
+
+        lastJumpTime = Time.time;
+        isGrounded = false;
+        anim.SetBool("IsGrounded", false);
+
         // Directly start the Jump state.
         // Calling this again restarts it for the second jump.
         anim.Play(JumpState, 0, 0f);
@@ -364,6 +394,12 @@ public class PlayerController : MonoBehaviour
     {
         // cannon check
         if (ControlsLocked)
+        {
+            return;
+        }
+
+        // Dash is unavailable before the trainer unlocks it.
+        if (!airDashUnlocked)
         {
             return;
         }
