@@ -3799,6 +3799,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 436c5ab4dae952a4ba6d68d668751a6c, type: 2}
+    - target: {fileID: -5279688729146203867, guid: 8e590819e6512cd4687400d3587d8f0e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -5274025761936767160, guid: 8e590819e6512cd4687400d3587d8f0e, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -11864,7 +11868,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1161939482}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &1161939486
 Camera:
   m_ObjectHideFlags: 0
