@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 7212221755936117095}
   - component: {fileID: 822011190338315647}
   - component: {fileID: 6551739151014868888}
+  - component: {fileID: 6494006371344862884}
   m_Layer: 12
-  m_Name: Floor
+  m_Name: FloorB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108,6 +109,38 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6494006371344862884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2162675192568796151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 2
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  m_UseGeometry: 1
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.1
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 25454faaa3031f44297368544a6ad37e, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &7293175799637293597
 GameObject:
   m_ObjectHideFlags: 0
@@ -149,6 +182,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3950641789933232962}
     m_Modifications:
+    - target: {fileID: 919132149155446097, guid: f1a7bb1df310da54595b3259be561617, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 331b8fa2230d0f84397fb0e9e7636450, type: 3}
       propertyPath: m_LocalScale.x
       value: 60
@@ -236,10 +273,6 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 331b8fa2230d0f84397fb0e9e7636450, type: 3}
       propertyPath: m_Name
       value: rolling_cloud_animation
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: f1a7bb1df310da54595b3259be561617, type: 3}
-      propertyPath: m_Layer
-      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
