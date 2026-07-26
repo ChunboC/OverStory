@@ -5755,6 +5755,127 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5634915949652587275, guid: 7f026fe7607f25b45a684cb6d6835296, type: 3}
   m_PrefabInstance: {fileID: 409677577}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &410497468
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2623393439451619042, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_Name
+      value: WeatherManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.6824289
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.1072947
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6.728261
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: playerRb
+      value: 
+      objectReference: {fileID: 252407623}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: windForce
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: rainEffect
+      value: 
+      objectReference: {fileID: 160098, guid: 69b40ef7ee16c834c844b3fa26e0fdda, type: 3}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: rainPrefab
+      value: 
+      objectReference: {fileID: 160098, guid: 69b40ef7ee16c834c844b3fa26e0fdda, type: 3}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: blastRadius
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: gameManager
+      value: 
+      objectReference: {fileID: 1859789523}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: p1BlastRadius
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: p2BlastRadius
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: p3BlastRadius
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: stormDuration
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: knockbackForce
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: playerTransform
+      value: 
+      objectReference: {fileID: 252407625}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: stormWarningTime
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: p1WarningDuration
+      value: 1.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: timeBetweenStorms
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: lightningWarningPrefab
+      value: 
+      objectReference: {fileID: 9023875461808981516, guid: ca371f033e19044e9bd4f4090fc43d52, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
 --- !u!1001 &412891589
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25559,6 +25680,9 @@ MonoBehaviour:
   selectedWinButton: {fileID: 0}
   loseMenuUI: {fileID: 0}
   selectedLoseButton: {fileID: 0}
+  creditsMenuUI: {fileID: 0}
+  selectedCreditsButton: {fileID: 0}
+  selectedBackButton: {fileID: 0}
   playerInput: {fileID: 252407621}
   preGameDirector: {fileID: 0}
   introSceneCameras: {fileID: 0}
@@ -30587,3 +30711,4 @@ SceneRoots:
   - {fileID: 1509733675}
   - {fileID: 1125254169}
   - {fileID: 376724971}
+  - {fileID: 410497468}

@@ -14738,6 +14738,9 @@ MonoBehaviour:
   selectedWinButton: {fileID: 0}
   loseMenuUI: {fileID: 0}
   selectedLoseButton: {fileID: 0}
+  creditsMenuUI: {fileID: 0}
+  selectedCreditsButton: {fileID: 0}
+  selectedBackButton: {fileID: 0}
   playerInput: {fileID: 1176345722}
   preGameDirector: {fileID: 1074966738}
   introSceneCameras: {fileID: 916180952}
@@ -20793,61 +20796,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2083607141}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &2090874710
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2090874712}
-  - component: {fileID: 2090874711}
-  m_Layer: 0
-  m_Name: WeatherManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2090874711
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2090874710}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1851adee3cf4436ba0b9c5cccfab49d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  playerTransform: {fileID: 1176345718}
-  playerRb: {fileID: 1176345719}
-  timeBetweenStorms: 18
-  stormDuration: 6
-  stormWarningTime: 3
-  rainEffect: {fileID: 1597824044}
-  windForce: 35
-  lightningWarningPrefab: {fileID: 5627696518775099638, guid: 6839a8d6998e86d4282063ffdacb0c15, type: 3}
-  lightningStrikePrefab: {fileID: 5627696518775099638, guid: 6839a8d6998e86d4282063ffdacb0c15, type: 3}
-  knockbackForce: 45
---- !u!4 &2090874712
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2090874710}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6824289, y: 1.1072947, z: 6.728261}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2099559884
 GameObject:
   m_ObjectHideFlags: 0
@@ -21651,6 +21599,75 @@ Transform:
   - {fileID: 416511141115984654}
   m_Father: {fileID: 5472622939981306455}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1042215495005484031
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2623393439451619042, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_Name
+      value: WeatherManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.6824289
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.1072947
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6.728261
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3160419698015527991, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: playerRb
+      value: 
+      objectReference: {fileID: 1176345719}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: rainEffect
+      value: 
+      objectReference: {fileID: 1597824044}
+    - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
+      propertyPath: playerTransform
+      value: 
+      objectReference: {fileID: 1176345718}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
 --- !u!1 &1156334874507024873
 GameObject:
   m_ObjectHideFlags: 0
@@ -23945,4 +23962,4 @@ SceneRoots:
   - {fileID: 1587998276}
   - {fileID: 2025140232}
   - {fileID: 2027446936}
-  - {fileID: 2090874712}
+  - {fileID: 1042215495005484031}
