@@ -15,6 +15,10 @@ public class PlayerController : MonoBehaviour
     private bool wasGrounded;
     private float lastJumpTime;
 
+    // For cannon 
+    public bool IsGrounded => isGrounded;
+    public bool ControlsLocked { get; private set; }
+
 
     private static readonly int JumpState =
         Animator.StringToHash("Base Layer.jump");
@@ -122,6 +126,12 @@ public class PlayerController : MonoBehaviour
 
     void OnMove (InputValue movementValue)
     {
+        // cannon check
+        if (ControlsLocked)
+        {
+            return;
+        }
+
         Vector2 movementVector = movementValue.Get<Vector2>();
         movementX = movementVector.x; 
         movementY = movementVector.y; 
@@ -166,6 +176,12 @@ public class PlayerController : MonoBehaviour
         }
 
         if (isAirDashing)
+        {
+            return;
+        }
+
+        // cannon check
+        if (ControlsLocked)
         {
             return;
         }
@@ -315,6 +331,12 @@ public class PlayerController : MonoBehaviour
 
     void OnJump()
     {
+        // cannon check
+        if (ControlsLocked)
+        {
+            return;
+        }
+
         if (jumpsRemaining <= 0) return;
 
         lastJumpTime = Time.time;
@@ -340,6 +362,12 @@ public class PlayerController : MonoBehaviour
 
     void OnDash(InputValue value)
     {
+        // cannon check
+        if (ControlsLocked)
+        {
+            return;
+        }
+
         if (!value.isPressed)
             return;
 
@@ -423,5 +451,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // when player enters cannon, movement should be locked
+    public void SetControlsLocked(bool locked)
+    {
+        ControlsLocked = locked;
+
+        if (locked)
+        {
+            movementX = 0f;
+            movementY = 0f;
+        }
+    }
 
 }
