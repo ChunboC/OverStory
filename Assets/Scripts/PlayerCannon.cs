@@ -22,6 +22,9 @@ public class PlayerCannon : MonoBehaviour
     [SerializeField] private float inputDelay = 0.35f;
     [SerializeField] private float landingTimeout = 8f;
 
+    [Header("Cannon Effects")]
+    [SerializeField] private ParticleSystem cannonSmoke;
+
     private PlayerController playerController;
     private Rigidbody playerRigidbody;
     private PlayerInput playerInput;
@@ -182,6 +185,12 @@ public class PlayerCannon : MonoBehaviour
             selectedLandingTarget.position,
             arcHeight
         );
+
+        if (cannonSmoke != null)
+        {
+            cannonSmoke.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            cannonSmoke.Play();
+        }
 
         playerRigidbody.linearVelocity = launchVelocity;
 
