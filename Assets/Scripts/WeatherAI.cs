@@ -64,7 +64,7 @@ public class WeatherAI : MonoBehaviour
     void Update()
     {
         // Prevent weather and timers from running during the intro cutscene
-        if (gameManager != null && gameManager.isIntroPlaying)
+        if (gameManager != null && GameManager.IsIntroPlaying)
         {
             nextStormTime = Time.time + timeBetweenStorms;
             nextStrikeTime = Time.time + Random.Range(minStrikeCooldown, maxStrikeCooldown);
