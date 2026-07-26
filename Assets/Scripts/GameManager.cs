@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
     public GameObject selectedWinButton;
     public GameObject loseMenuUI;
     public GameObject selectedLoseButton;
+    public GameObject creditsMenuUI;
+    public GameObject selectedCreditsButton;
+    public GameObject selectedBackButton;
 
     [Header("Input Settings")]
     public PlayerInput playerInput;
@@ -80,6 +83,11 @@ public class GameManager : MonoBehaviour
                 EventSystem.current.SetSelectedGameObject(null);
                 EventSystem.current.SetSelectedGameObject(selectedStartButton);
             }
+        }
+
+        if (creditsMenuUI != null)
+        {
+            creditsMenuUI.SetActive(false);
         }
 
         if (enemyGameObject != null) enemyAgent = enemyGameObject.GetComponent<UnityEngine.AI.NavMeshAgent>();
@@ -381,5 +389,21 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(penaltyTextDuration);
 
         penaltyText.gameObject.SetActive(false);
+    }
+
+    public void ShowCredits()
+    {
+        if (creditsMenuUI != null)
+        {
+            creditsMenuUI.SetActive(true);
+        }
+    }
+
+    public void HideCredits()
+    {
+        if (creditsMenuUI != null)
+        {
+            creditsMenuUI.SetActive(false);
+        }
     }
 }
