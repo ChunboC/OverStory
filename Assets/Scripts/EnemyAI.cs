@@ -6,7 +6,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviour
 {
-    public enum AIState { Idle, Evade, Jump, Escaped, Laugh } // Removed DropObstacle
+    public enum AIState { Idle, Evade, Jump, Escaped, Laugh } 
     public GameManager gameManager;
     
     [Header("AI State & Core Targets")]
@@ -31,8 +31,8 @@ public class EnemyAI : MonoBehaviour
     [Header("Tactical Spawning")]
     public GameObject slimePrefab;
     public Transform dropPoint; 
-    public float obstacleCooldown = 4.0f; 
-    public float periodicDropCooldown = 8.0f; 
+    public float maxDropCooldown = 8.0f; // Cooldown when player is far
+    public float minDropCooldown = 2.0f; // Cooldown when player is close
     private float lastDropTime = 0f;
 
     [Header("Movement & Animation")]
@@ -56,7 +56,8 @@ public class EnemyAI : MonoBehaviour
         
         agent.autoTraverseOffMeshLink = true; 
         agent.autoBraking = false; 
-        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance; 
+        // Upgraded to High Quality to prevent snagging on building corners
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance; 
         
         normalSpeedCache = normalSpeed;
         agent.speed = normalSpeed;
@@ -109,7 +110,7 @@ public class EnemyAI : MonoBehaviour
 
     private void HandleEvasion()
     {
-        if (isJumping) return; // Allowed to evade while dropping obstacle
+        if (isJumping) return; 
         if (anim) anim.SetBool("IsRunning", true);
 
         ApplyProceduralWaddle();
@@ -126,12 +127,17 @@ public class EnemyAI : MonoBehaviour
 
         float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
         
+        // Dynamically scale speed based on player proximity
         if (!isSlowed)
         {
-            agent.speed = distanceToPlayer < 12f ? panicSpeed : normalSpeed;
+            float speedLerp = Mathf.Clamp01((distanceToPlayer - 5f) / (safeDistance - 5f));
+            agent.speed = Mathf.Lerp(panicSpeed, normalSpeed, speedLerp);
         }
 
-        if (!agent.pathPending && agent.remainingDistance < recalculatePathDistance)
+        // Detect if stuck against a building (velocity near 0, but hasn't reached target)
+        bool isStuck = agent.velocity.sqrMagnitude < 0.2f && agent.remainingDistance > recalculatePathDistance;
+
+        if (!agent.pathPending && (agent.remainingDistance < recalculatePathDistance || isStuck))
         {
             Vector3 bestTarget;
             
@@ -196,28 +202,38 @@ public class EnemyAI : MonoBehaviour
         float distToGoal = Vector3.Distance(candidatePos, beanstalkDestination.position);
         float currentDistToPlayer = Vector3.Distance(transform.position, playerTransform.position);
 
-        if (distToPlayer < currentDistToPlayer)
+        score += distToPlayer * 2.5f; 
+
+        // Only heavily penalize points that move closer to the player IF the player is actually a threat
+        if (distToPlayer < currentDistToPlayer && currentDistToPlayer < safeDistance)
         {
             score -= 1000f; 
         }
 
-        score += distToPlayer * 2.5f; 
-        score -= distToGoal * 1.0f;   
+        // If player is far, wander toward the goal to keep the AI moving continuously
+        if (currentDistToPlayer > safeDistance)
+        {
+            score -= distToGoal * 2.0f;
+        }
+        else
+        {
+            score -= distToGoal * 1.0f;
+        }
 
         return score;
     }
 
     private void HandleTacticalDrops()
     {
-        if (Time.time < lastDropTime + obstacleCooldown || isJumping || isDroppingObstacle) return;
+        if (isJumping || isDroppingObstacle) return;
 
-        Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
-        float dotProduct = Vector3.Dot(transform.forward, dirToPlayer);
+        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+        
+        // Dynamically scale slime cooldown based on player proximity
+        float cooldownLerp = Mathf.Clamp01((distanceToPlayer - 5f) / (safeDistance - 5f));
+        float currentCooldown = Mathf.Lerp(minDropCooldown, maxDropCooldown, cooldownLerp);
 
-        bool playerIsCloseBehind = (dotProduct < -0.6f && Vector3.Distance(transform.position, playerTransform.position) < 14f);
-        bool periodicDropReady = (Time.time >= lastDropTime + periodicDropCooldown);
-
-        if (playerIsCloseBehind || periodicDropReady)
+        if (Time.time >= lastDropTime + currentCooldown)
         {
             StartCoroutine(PerformDropObstacleSequence());
         }
@@ -232,7 +248,8 @@ public class EnemyAI : MonoBehaviour
         
         SpawnSlimePuddle();
 
-        yield return new WaitForSeconds(1.2f);
+        // Reduced wait state to prevent movement locking while upper body anim plays
+        yield return new WaitForSeconds(0.25f);
         
         isDroppingObstacle = false;
     }

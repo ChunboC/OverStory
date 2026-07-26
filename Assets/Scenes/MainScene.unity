@@ -10101,8 +10101,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1100051995}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.085618086, y: 0.89756083, z: -0.20054598, w: 0.38319105}
-  m_LocalPosition: {x: -4.2724676, y: 3.1990533, z: 4.5602565}
+  m_LocalRotation: {x: 0, y: 0.9732491, z: -0.2297529, w: 0}
+  m_LocalPosition: {x: -0.1544609, y: 3.4881244, z: 7.89}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10844,7 +10844,7 @@ MonoBehaviour:
   groundAcceleration: 35
   airAcceleration: 8
   fallGravityMultiplier: 2.5
-  airDashSpeed: 16
+  airDashSpeed: 25
   airDashDuration: 0.18
   cameraPivot: {fileID: 1479467567}
   mouseSensitivity: 0.1
@@ -11450,8 +11450,8 @@ MonoBehaviour:
   survivalTimeRequired: 45
   slimePrefab: {fileID: 3450760242328152523, guid: d11adf248e8224c2a97572c236eb436a, type: 3}
   dropPoint: {fileID: 0}
-  obstacleCooldown: 4
-  periodicDropCooldown: 8
+  maxDropCooldown: 8
+  minDropCooldown: 2
   normalSpeed: 0
   panicSpeed: 14
   waddleSpeed: 5
@@ -20822,15 +20822,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1851adee3cf4436ba0b9c5cccfab49d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
+  gameManager: {fileID: 1512007770}
+  directionalLight: {fileID: 2101027527}
   playerTransform: {fileID: 1176345718}
   playerRb: {fileID: 1176345719}
-  timeBetweenStorms: 18
+  timeBetweenStorms: 24
   stormDuration: 6
   stormWarningTime: 3
   rainEffect: {fileID: 1597824044}
-  windForce: 35
-  lightningWarningPrefab: {fileID: 5627696518775099638, guid: 6839a8d6998e86d4282063ffdacb0c15, type: 3}
+  windForce: 12
+  lightningWarningPrefab: {fileID: 330283016274094643, guid: ca371f033e19044e9bd4f4090fc43d52, type: 3}
   lightningStrikePrefab: {fileID: 5627696518775099638, guid: 6839a8d6998e86d4282063ffdacb0c15, type: 3}
   knockbackForce: 45
 --- !u!4 &2090874712

@@ -5,14 +5,15 @@ public class WeatherAI : MonoBehaviour
 {
     [Header("System Dependencies")]
     public GameManager gameManager;
+    public Light directionalLight; 
 
     [Header("Targeting & Prediction")]
     public Transform playerTransform;
     public Rigidbody playerRb; 
     
-    [Header("Storm Settings (Occasional)")]
-    public float timeBetweenStorms = 18f; 
-    public float stormDuration = 3.5f;    
+    [Header("Storm Settings")]
+    public float timeBetweenStorms = 15f; 
+    public float stormDuration = 6.0f;    
     public float stormWarningTime = 3f; 
     
     public GameObject rainEffect; 
@@ -23,27 +24,29 @@ public class WeatherAI : MonoBehaviour
     private float nextStormTime;
     private Vector3 currentWindDirection;
 
-    [Header("Lightning Settings (Constant Random)")]
+    [Header("Lightning Telegraph & Knockback")]
     public GameObject lightningWarningPrefab; 
     public GameObject lightningStrikePrefab;  
-    private float minStrikeCooldown = 4.0f; 
-    private float maxStrikeCooldown = 6.0f;
+    
+    private float minStrikeCooldown = 2.0f; 
+    private float maxStrikeCooldown = 3.0f;
     private float nextStrikeTime;
-    private float warningDuration = 1.2f; 
-    private float blastRadius = 4.5f;
-    public float knockbackForce = 45f;
+    
+    // Adjusted for faster reaction requirement and smaller area
+    private float warningDuration = 1.5f; 
+    private float blastRadius = 3.5f;
+    public float knockbackForce = 45f; 
 
     [Header("Escalation Timer")]
     private float timeElapsed = 0f;
     private int currentPhase = 1;
+    private float originalLightIntensity;
 
     void Start()
     {
-        // Auto-assign GameManager if empty
-        if (gameManager == null)
-        {
-            gameManager = FindFirstObjectByType<GameManager>();
-        }
+        if (gameManager == null) gameManager = FindFirstObjectByType<GameManager>();
+
+        if (directionalLight != null) originalLightIntensity = directionalLight.intensity;
 
         if (playerTransform == null)
         {
@@ -56,28 +59,27 @@ public class WeatherAI : MonoBehaviour
         }
         
         nextStormTime = Time.time + timeBetweenStorms;
-        nextStrikeTime = Time.time + Random.Range(minStrikeCooldown, maxStrikeCooldown);
-
         if (rainEffect != null) rainEffect.SetActive(false);
     }
 
     void Update()
     {
-        // Prevent weather and timers from running during the intro cutscene
-        if (gameManager != null && GameManager.IsIntroPlaying)
+        if (GameManager.IsIntroPlaying)
         {
             nextStormTime = Time.time + timeBetweenStorms;
-            nextStrikeTime = Time.time + Random.Range(minStrikeCooldown, maxStrikeCooldown);
             return; 
         }
 
         timeElapsed += Time.deltaTime;
         UpdateDifficultyPhase();
 
-        if (Time.time >= nextStrikeTime && playerTransform != null)
+        if (isStormActive)
         {
-            StartCoroutine(ExecuteLightningStrike());
-            nextStrikeTime = Time.time + Random.Range(minStrikeCooldown, maxStrikeCooldown);
+            if (Time.time >= nextStrikeTime && playerTransform != null)
+            {
+                StartCoroutine(ExecuteLightningStrike());
+                nextStrikeTime = Time.time + Random.Range(minStrikeCooldown, maxStrikeCooldown);
+            }
         }
 
         if (!isStormActive && !hasWarnedForStorm && Time.time >= (nextStormTime - stormWarningTime))
@@ -96,14 +98,16 @@ public class WeatherAI : MonoBehaviour
     {
         if (isStormActive && playerRb != null)
         {
-            playerRb.AddForce(currentWindDirection * windForce, ForceMode.Force);
+            playerRb.AddForce(currentWindDirection * windForce, ForceMode.Acceleration);
         }
     }
 
     private IEnumerator ExecuteStormEvent()
     {
         isStormActive = true;
-        Debug.Log("<color=cyan>[WEATHER AI]</color> Storm Started! Rain and Wind active.");
+        nextStrikeTime = Time.time + 0.5f; 
+
+        Debug.Log("<color=cyan>[WEATHER AI]</color> Storm Started!");
 
         Vector3 playerVelocity = new Vector3(playerRb.linearVelocity.x, 0f, playerRb.linearVelocity.z);
         if (playerVelocity.magnitude > 2f)
@@ -128,7 +132,7 @@ public class WeatherAI : MonoBehaviour
         if (rainEffect != null) rainEffect.SetActive(false);
         
         nextStormTime = Time.time + timeBetweenStorms;
-        Debug.Log("<color=cyan>[WEATHER AI]</color> Storm Ended. Weather clear.");
+        Debug.Log("<color=cyan>[WEATHER AI]</color> Storm Ended.");
     }
 
     private void UpdateDifficultyPhase()
@@ -136,25 +140,26 @@ public class WeatherAI : MonoBehaviour
         if (timeElapsed >= 40f && currentPhase < 3)
         {
             currentPhase = 3;
-            minStrikeCooldown = 2.5f; 
-            maxStrikeCooldown = 4.0f;
-            warningDuration = 0.85f; 
-            blastRadius = 6.0f; 
+            minStrikeCooldown = 1.0f; 
+            maxStrikeCooldown = 2.0f;
+            blastRadius = 5.0f; // Scaled down from 6.0f
             windForce = 5f; 
         }
         else if (timeElapsed >= 20f && timeElapsed < 40f && currentPhase < 2)
         {
             currentPhase = 2;
-            minStrikeCooldown = 3.0f;
-            maxStrikeCooldown = 5.0f;
-            warningDuration = 1.0f;
-            blastRadius = 5.0f; 
+            minStrikeCooldown = 1.5f;
+            maxStrikeCooldown = 2.5f;
+            blastRadius = 4.0f; // Scaled down from 5.0f
             windForce = 4f; 
         }
     }
 
     private IEnumerator ExecuteLightningStrike()
     {
+        // 1. Trigger Global Flash
+        if (directionalLight != null) StartCoroutine(FlashSky());
+
         Vector3 predictedPosition = playerTransform.position;
         if (playerRb != null)
         {
@@ -163,6 +168,7 @@ public class WeatherAI : MonoBehaviour
         }
         predictedPosition.y = 0.5f; 
 
+        // 2. Spawn Telegraph Circle
         GameObject warning = null;
         if (lightningWarningPrefab != null)
         {
@@ -172,6 +178,7 @@ public class WeatherAI : MonoBehaviour
         
         yield return new WaitForSeconds(warningDuration);
         
+        // 3. Execute Strike & Cleanup Warning
         if (warning != null) Destroy(warning);
         if (lightningStrikePrefab != null)
         {
@@ -179,6 +186,7 @@ public class WeatherAI : MonoBehaviour
             Destroy(strike, 1.5f); 
         }
         
+        // 4. Check Hit Distance
         float distanceToPlayer = Vector3.Distance(
             new Vector3(playerTransform.position.x, 0, playerTransform.position.z), 
             new Vector3(predictedPosition.x, 0, predictedPosition.z)
@@ -190,13 +198,24 @@ public class WeatherAI : MonoBehaviour
         }
     }
 
+    private IEnumerator FlashSky()
+    {
+        directionalLight.intensity = originalLightIntensity * 4f; 
+        yield return new WaitForSeconds(0.1f);
+        directionalLight.intensity = originalLightIntensity;
+    }
+
     private void ApplyLightningPenalty(Vector3 strikeCenter)
     {
+        Debug.Log("<color=red>[WEATHER AI]</color> Player Struck! Applying knockback force.");
+
         if (playerRb != null)
         {
             playerRb.linearVelocity = Vector3.zero;
+
             Vector3 pushDirection = (playerTransform.position - strikeCenter).normalized;
             pushDirection.y = 0.75f; 
+
             playerRb.AddForce(pushDirection.normalized * knockbackForce, ForceMode.Impulse);
         }
     }
