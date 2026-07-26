@@ -41,7 +41,7 @@ public class ProjectileThrower : MonoBehaviour
             return;
         }
         if ((Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-            || (Gamepad.current != null && Gamepad.current.leftTrigger.wasPressedThisFrame))
+            || (Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame))
         {
             if (shamrockCount > 0)
             {
