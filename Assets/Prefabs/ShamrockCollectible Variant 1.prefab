@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: rotationSpeed.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5423195943717259257, guid: 42c32334d9fa3f84097e8113f2db0f2a, type: 3}
+      propertyPath: collectSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6d93d1db88be1034c90f3551ef5b72a1, type: 3}
     - target: {fileID: 5907719183274509235, guid: 42c32334d9fa3f84097e8113f2db0f2a, type: 3}
       propertyPath: m_Name
       value: ShamrockCollectible Variant 1

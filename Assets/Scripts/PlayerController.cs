@@ -430,6 +430,11 @@ public class PlayerController : MonoBehaviour
         }
 
         dashDirection.Normalize();
+      
+        if (leprechaunAudio != null)
+        {
+            leprechaunAudio.PlayDash();
+        }
 
         StartCoroutine(AirDashRoutine(dashDirection));
 
