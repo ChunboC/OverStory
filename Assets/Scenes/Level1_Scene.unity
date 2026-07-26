@@ -5849,7 +5849,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
       propertyPath: knockbackForce
-      value: 15
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7242523918511862493, guid: f1ee9ba527b1449399e00c576985c979, type: 3}
       propertyPath: playerTransform
