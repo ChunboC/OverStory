@@ -32,13 +32,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5907719183274509235}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5, y: -0.5, z: -0.5, w: 0.5}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.56, y: 1.77, z: -2.84}
   m_LocalScale: {x: 0.07, y: 2, z: 0.07}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: -90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3328947058965618392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3340,7 +3340,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 9.857141, y: 0.3, z: 9.670304}
+  m_Size: {x: 9.857141, y: 0.04, z: 9.670304}
   m_Center: {x: 3.853642, y: 0.02, z: -0.044812206}
 --- !u!114 &4553379100055606134
 MonoBehaviour:
@@ -3354,13 +3354,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc70f14035aab4343b0dd9b861550a13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: {x: 0, y: 120, z: 0}
-  spinInWorldSpace: 1
+  rotationSpeed: {x: 90, y: 0, z: 0}
   hoverFrequency: 1
   hoverAmplitude: 0.2
-  hoverPhase: 0
-  followTarget: {fileID: 0}
-  followOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &5423195943717259257
 MonoBehaviour:
   m_ObjectHideFlags: 0
