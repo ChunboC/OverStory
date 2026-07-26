@@ -83,6 +83,19 @@ public class PlayerController : MonoBehaviour
         mouseX = transform.eulerAngles.y;
         mouseY = 0f;
         jumpsRemaining = maxJumps;
+
+        doubleJumpUnlocked =
+            doubleJumpUnlocked ||
+            RunProgress.DoubleJumpUnlocked;
+
+        airDashUnlocked =
+            airDashUnlocked ||
+            RunProgress.AirDashUnlocked;
+
+        Debug.Log(
+            $"Loaded abilities — Double Jump: {doubleJumpUnlocked}, " +
+            $"Air Dash: {airDashUnlocked}"
+        );
     }
 
     void LateUpdate()
@@ -132,12 +145,15 @@ public class PlayerController : MonoBehaviour
     public void UnlockDoubleJump()
     {
         doubleJumpUnlocked = true;
-        Debug.Log("Double jump unlocked.");
+        RunProgress.UnlockDoubleJump();
+
+        Debug.Log("Double Jump unlocked on Player.");
     }
 
     public void UnlockAirDash()
     {
         airDashUnlocked = true;
+        RunProgress.UnlockAirDash();
         Debug.Log("Air dash unlocked.");
     }
 
