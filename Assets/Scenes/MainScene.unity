@@ -10945,14 +10945,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0684347ce3e64644a97063fa20d3a811, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundCheckDelayAfterJump: 0.1
   speed: 100
   turnSpeed: 15
   jumpForce: 50
   maxJumps: 2
+  groundAcceleration: 35
+  airAcceleration: 8
+  fallGravityMultiplier: 2.5
+  airDashSpeed: 16
+  airDashDuration: 0.18
   cameraPivot: {fileID: 1479467567}
   mouseSensitivity: 0.1
   upperLookLimit: 80
   lowerLookLimit: -40
+  controllerLookSpeed: 160
+  rightStickDeadZone: 0.15
   gameManager: {fileID: 1512007770}
 --- !u!136 &1176345721
 CapsuleCollider:
@@ -11023,6 +11031,7 @@ MonoBehaviour:
   objectToThrow: {fileID: 5907719183274509235, guid: ef354581575815543bea53b6e8b9abac, type: 3}
   throwForce: 50
   upwardForce: 10
+  useCarriedShamrocks: 1
   playerCamera: {fileID: 1100051997}
   gameManager: {fileID: 1512007770}
 --- !u!95 &1176345724
@@ -14883,6 +14892,10 @@ MonoBehaviour:
   cameraAnchor: {fileID: 294850170}
   playerGameObject: {fileID: 1176345717}
   enemyGameObject: {fileID: 919132148018969971}
+  gamePlaying: 0
+  firstSceneName: MainScene
+  penaltyText: {fileID: 0}
+  penaltyTextDuration: 2
 --- !u!4 &1512007771
 Transform:
   m_ObjectHideFlags: 0

@@ -12,6 +12,10 @@ public class ProjectileThrower : MonoBehaviour
     private int shamrockCount = 0;
     public int ShamrockCount => shamrockCount;
 
+    [Header("Carryover")]
+    [Tooltip("Start with the shamrocks banked in Level 1. Enable on the MainScene player, leave off in Level 1.")]
+    public bool useCarriedShamrocks = false;
+
     public Camera playerCamera;
     private LeprechaunPlayerAudio leprechaunAudio;
 
@@ -21,6 +25,12 @@ public class ProjectileThrower : MonoBehaviour
     void Start()
     {
         leprechaunAudio = GetComponent<LeprechaunPlayerAudio>();
+
+        if (useCarriedShamrocks)
+        {
+            shamrockCount = RunProgress.GetCarriedShamrocks();
+            Debug.Log($"Starting with {shamrockCount} shamrock(s) carried from Level 1.");
+        }
     }
 
     // Update is called once per frame

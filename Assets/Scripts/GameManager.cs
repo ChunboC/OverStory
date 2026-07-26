@@ -45,6 +45,10 @@ public class GameManager : MonoBehaviour
     private bool isIntroPlaying = false;
     public bool gamePlaying = false;
 
+    [Header("Run Flow")]
+    [Tooltip("Scene the Start button loads. Set to Level1_Scene once the level is in the build list.")]
+    public string firstSceneName = "MainScene";
+
     [Header("Fall Penalty Settings")]
     public TMP_Text penaltyText;
     public float penaltyTextDuration = 2f;
@@ -84,6 +88,12 @@ public class GameManager : MonoBehaviour
             preGameDirector.stopped += OnIntroSequenceFinished;
             preGameDirector.Play();
         }
+        else
+        {
+            // Scenes without an intro cutscene (Level1_Scene) would otherwise
+            // never leave the pre-game state, freezing the timer and the HUD.
+            StartGameplay();
+        }
 
         if (penaltyText != null)
         {
@@ -93,7 +103,9 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("MainScene");
+        // A run starts here, so drop anything banked by a previous attempt.
+        RunProgress.ResetRun();
+        SceneManager.LoadScene(string.IsNullOrEmpty(firstSceneName) ? "MainScene" : firstSceneName);
     }
 
     private void OnIntroSequenceFinished(UnityEngine.Playables.PlayableDirector director)
@@ -126,17 +138,20 @@ public class GameManager : MonoBehaviour
             introSceneCameras.SetActive(false);
         }
 
-        if (cameraAnchor != null)
+        if (Camera.main != null)
         {
-            Camera.main.transform.localPosition = cameraAnchor.localPosition;
-            Camera.main.transform.localRotation = cameraAnchor.localRotation;
-        }
+            if (cameraAnchor != null)
+            {
+                Camera.main.transform.localPosition = cameraAnchor.localPosition;
+                Camera.main.transform.localRotation = cameraAnchor.localRotation;
+            }
 
-        var brain = Camera.main.GetComponent("CinemachineBrain") as MonoBehaviour;
-        if (brain != null)
-        {
-            brain.enabled = false;
-            Debug.Log("Cinemachine Brain explicitly disabled to restore child camera settings.");
+            var brain = Camera.main.GetComponent("CinemachineBrain") as MonoBehaviour;
+            if (brain != null)
+            {
+                brain.enabled = false;
+                Debug.Log("Cinemachine Brain explicitly disabled to restore child camera settings.");
+            }
         }
 
         Debug.Log("Pre-game animation finished");
@@ -201,6 +216,7 @@ public class GameManager : MonoBehaviour
     public void MainMenu()
     {
         gamePlaying = false;
+        RunProgress.ResetRun();
         SceneManager.LoadScene("StartMenu");
     }
 
@@ -244,7 +260,7 @@ public class GameManager : MonoBehaviour
         if (playerGameObject != null)
         {
             ProjectileThrower thrower = playerGameObject.GetComponent<ProjectileThrower>();
-            UpdateShamrockCount(thrower.ShamrockCount);
+            if (thrower != null) UpdateShamrockCount(thrower.ShamrockCount);
         }
     }
 
