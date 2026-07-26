@@ -112,6 +112,10 @@ public class WeatherAI : MonoBehaviour
         {
             Transform rainParent = Camera.main != null ? Camera.main.transform : playerTransform;
             activeRainInstance = Instantiate(rainPrefab, rainParent);
+            
+            // ADD THESE TWO LINES: Force the rain to center exactly on the parent camera
+            activeRainInstance.transform.localPosition = Vector3.zero;
+            activeRainInstance.transform.localRotation = Quaternion.identity;
         }
 
         yield return new WaitForSeconds(stormDuration);
