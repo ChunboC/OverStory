@@ -10102,7 +10102,7 @@ Transform:
   m_GameObject: {fileID: 1100051995}
   serializedVersion: 2
   m_LocalRotation: {x: 0.085618086, y: 0.89756083, z: -0.20054598, w: 0.38319105}
-  m_LocalPosition: {x: -4.2724676, y: 3.2590532, z: 4.5602565}
+  m_LocalPosition: {x: -4.2724676, y: 3.1990533, z: 4.5602565}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10788,7 +10788,7 @@ Transform:
   m_GameObject: {fileID: 1176345717}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.63, z: 0}
+  m_LocalPosition: {x: 0, y: 1.69, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10873,9 +10873,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2.2
+  m_Height: 2.03
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.93, z: 0}
 --- !u!114 &1176345722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11445,14 +11445,14 @@ MonoBehaviour:
   beanstalkDestination: {fileID: 1898401563}
   fleeRadius: 15
   safeDistance: 20
-  samplePoints: 16
-  recalculatePathDistance: 5
-  survivalTimeRequired: 60
+  samplePoints: 8
+  recalculatePathDistance: 2.5
+  survivalTimeRequired: 45
   slimePrefab: {fileID: 3450760242328152523, guid: d11adf248e8224c2a97572c236eb436a, type: 3}
   dropPoint: {fileID: 0}
   obstacleCooldown: 4
   periodicDropCooldown: 8
-  normalSpeed: 12
+  normalSpeed: 0
   panicSpeed: 14
   waddleSpeed: 5
   tiltIntensity: 5
@@ -20822,6 +20822,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1851adee3cf4436ba0b9c5cccfab49d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
   playerTransform: {fileID: 1176345718}
   playerRb: {fileID: 1176345719}
   timeBetweenStorms: 18

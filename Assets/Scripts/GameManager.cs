@@ -42,7 +42,9 @@ public class GameManager : MonoBehaviour
 
     private bool isPaused;
     private bool gameOver = false;
-    private bool isIntroPlaying = false;
+    private static bool isIntroPlaying;
+    public static bool IsIntroPlaying => isIntroPlaying;
+
     public bool gamePlaying = false;
 
     [Header("Run Flow")]
