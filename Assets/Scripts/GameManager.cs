@@ -107,7 +107,14 @@ public class GameManager : MonoBehaviour
     {
         // A run starts here, so drop anything banked by a previous attempt.
         RunProgress.ResetRun();
-        SceneManager.LoadScene(string.IsNullOrEmpty(firstSceneName) ? "MainScene" : firstSceneName);
+        SceneManager.LoadScene(string.IsNullOrEmpty(firstSceneName) ? "TutorialVillage" : firstSceneName);
+    }
+
+    public void PlayAgainLevel1()
+    {
+        Time.timeScale = 1f;
+        RunProgress.ResetRun();
+        SceneManager.LoadScene("Level1_Scene");
     }
 
     private void OnIntroSequenceFinished(UnityEngine.Playables.PlayableDirector director)
