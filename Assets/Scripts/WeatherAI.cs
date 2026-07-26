@@ -12,12 +12,11 @@ public class WeatherAI : MonoBehaviour
     
     [Header("Storm Settings")]
     public float timeBetweenStorms = 15f; 
-    public float stormDuration = 5.0f;    
-    public float stormWarningTime = 3f; 
+    public float stormDuration = 8f;    
+    public float stormWarningTime = 2f; 
     
-    // CHANGED: We now use a prefab to spawn fresh rain every time
     public GameObject rainPrefab; 
-    public float windForce = 3f; 
+    public float windForce = 6f; 
     
     [Header("Lightning Settings")]
     public GameObject lightningWarningPrefab; 
@@ -25,8 +24,8 @@ public class WeatherAI : MonoBehaviour
     public float minStrikeCooldown = 1.2f; 
     public float maxStrikeCooldown = 2.2f;
     public float warningDuration = 1.5f; 
-    public float blastRadius = 1.2f; 
-    public float knockbackForce = 45f;
+    public float blastRadius = 0.8f; 
+    public float knockbackForce = 15f;
 
     // Active State Variables
     private bool isStormActive = false;
