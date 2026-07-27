@@ -9,6 +9,10 @@ public static class RunProgress
     public static int Level1Collected { get; private set; }
     public static bool ClearedLevel1 { get; private set; }
 
+    // Ability progression
+    public static bool DoubleJumpUnlocked { get; private set; }
+    public static bool AirDashUnlocked { get; private set; }
+
     // Play Mode can be entered with domain reload disabled, which would leave
     // last session's totals sitting in these fields. Clear them on load.
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -34,5 +38,17 @@ public static class RunProgress
     public static int GetCarriedShamrocks()
     {
         return CarriedShamrocks;
+    }
+
+    public static void UnlockDoubleJump()
+    {
+        DoubleJumpUnlocked = true;
+        Debug.Log("[RunProgress] Double Jump unlocked.");
+    }
+
+    public static void UnlockAirDash()
+    {
+        AirDashUnlocked = true;
+        Debug.Log("[RunProgress] Air Dash unlocked.");
     }
 }

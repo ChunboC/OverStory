@@ -32,6 +32,10 @@ public class CollectibleSpawner : MonoBehaviour
     [Tooltip("Spacing along X when a stop is worth more than one shamrock.")]
     public float clusterSpacing = 0.9f;
 
+    [Tooltip("Rotation given to every placed shamrock. These are the same numbers the " +
+             "Inspector's Rotation field shows, so what you set here is what you read back.")]
+    public Vector3 rotationPosition = new Vector3(0f, 0f, 270f);
+
     [Header("Reward Per Stop")]
     public int easyReward = 1;
     public int mediumReward = 2;
@@ -85,6 +89,11 @@ public class CollectibleSpawner : MonoBehaviour
 
                     collectible.name = $"Shamrock_{route.routeName}_{total:D3}";
                     collectible.transform.position = spawnPosition;
+
+                    // localEulerAngles, not rotation: it drives the same value the
+                    // Inspector displays, so the placed shamrock reads back exactly
+                    // the numbers set above rather than an equivalent quaternion.
+                    collectible.transform.localEulerAngles = rotationPosition;
 
                     Undo.RegisterCreatedObjectUndo(collectible, "Generate Collectibles");
                     total++;

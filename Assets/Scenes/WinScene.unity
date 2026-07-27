@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: f15c336556dd74f40aaca655f7767970, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -506,7 +506,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 0.2
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1393,6 +1393,9 @@ MonoBehaviour:
   playerGameObject: {fileID: 0}
   enemyGameObject: {fileID: 0}
   gamePlaying: 0
+  firstSceneName: MainScene
+  penaltyText: {fileID: 0}
+  penaltyTextDuration: 2
 --- !u!4 &1641761756
 Transform:
   m_ObjectHideFlags: 0
