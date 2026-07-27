@@ -30388,7 +30388,7 @@ PrefabInstance:
       objectReference: {fileID: 252407623}
     - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
       propertyPath: windForce
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
       propertyPath: rainEffect
@@ -30412,7 +30412,7 @@ PrefabInstance:
       objectReference: {fileID: 252407625}
     - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
       propertyPath: timeBetweenStorms
-      value: 15
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
       propertyPath: lightningWarningPrefab
