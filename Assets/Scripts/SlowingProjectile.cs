@@ -3,7 +3,7 @@ using UnityEngine;
 public class SlowingProjectile : MonoBehaviour
 {
     public float slowAmount = 0.5f; // 50% slow
-    public float slowDuration = 3f;
+    public float slowDuration = 5f;
 
     private bool hasHit;
 
