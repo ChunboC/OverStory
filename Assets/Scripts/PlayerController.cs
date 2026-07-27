@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour
             RunProgress.AirDashUnlocked;
 
         Debug.Log(
-            $"Loaded abilities — Double Jump: {doubleJumpUnlocked}, " +
+            $"Loaded abilities ï¿½ Double Jump: {doubleJumpUnlocked}, " +
             $"Air Dash: {airDashUnlocked}"
         );
     }
