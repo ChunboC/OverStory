@@ -853,8 +853,8 @@ MonoBehaviour:
   survivalTimeRequired: 45
   slimePrefab: {fileID: 3450760242328152523, guid: d11adf248e8224c2a97572c236eb436a, type: 3}
   dropPoint: {fileID: 0}
-  obstacleCooldown: 20
-  periodicDropCooldown: 28
+  obstacleCooldown: 15
+  periodicDropCooldown: 20
   normalSpeed: 7
   accelerationSpeed: 10
   panicSpeed: 10
