@@ -217,8 +217,7 @@ public class EnemyAI : MonoBehaviour
         {
             if (branch.currentPlatform == currentTargetWaypoint && branch.nextChoices != null && branch.nextChoices.Count > 0)
             {
-                //int randomIndex = Random.Range(0, branch.nextChoices.Count);
-                int randomIndex = 0;
+                int randomIndex = Random.Range(0, branch.nextChoices.Count);
                 nextPlatform = branch.nextChoices[randomIndex];
                 break;
             }
