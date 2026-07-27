@@ -1771,7 +1771,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "Assets/Resources Used:\nPlayer Animations - Mixamo\nLeprechaun model -
-    ai3dgen\nTroll model - \nVillage model -\nBeanstalk model - "
+    ai3dgen\nTroll model - \nVillage model -\nBeanstalk model - meshy.ai\nCloud model
+    - meshy.ai, blender\nBridges - MaxiBrut"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
