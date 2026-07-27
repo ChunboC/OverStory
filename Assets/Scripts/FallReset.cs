@@ -54,6 +54,13 @@ public class FallReset : MonoBehaviour
         {
             if (playerController.IsGrounded && transform.position.y >= -1) // Only save position when touching safe ground
             {
+                if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.5f))
+                {
+                    if (hit.collider.CompareTag("MovingPlatform"))  // Ignore moving platforms when saving safe ground
+                    {
+                        return;
+                    }
+                }
                 //Debug.Log("updating safe resparwn position");
                 lastSafePosition = transform.position;
                 lastSafeRotation = transform.rotation;
