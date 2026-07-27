@@ -393,11 +393,20 @@ public class GameManager : MonoBehaviour
 
     public void ShowCredits()
     {
-        if (creditsMenuUI != null)
+        if (creditsMenuUI == null)
         {
-            creditsMenuUI.SetActive(true);
+            return;
         }
+
+        creditsMenuUI.SetActive(true);
+
+        // Wait one frame for the Credits panel to become active,
+        // then select its Back button.
+        StartCoroutine(
+            SelectButtonNextFrame(selectedBackButton)
+        );
     }
+
 
     public void HideCredits()
     {
@@ -405,5 +414,27 @@ public class GameManager : MonoBehaviour
         {
             creditsMenuUI.SetActive(false);
         }
+
+        // Return controller selection to the Credits button.
+        StartCoroutine(
+            SelectButtonNextFrame(selectedCreditsButton)
+        );
+    }
+
+    private IEnumerator SelectButtonNextFrame(
+    GameObject buttonToSelect)
+    {
+        yield return null;
+
+        if (EventSystem.current == null ||
+            buttonToSelect == null)
+        {
+            yield break;
+        }
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(
+            buttonToSelect
+        );
     }
 }
