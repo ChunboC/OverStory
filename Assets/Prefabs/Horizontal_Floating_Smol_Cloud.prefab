@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 6551739151014868888}
   - component: {fileID: 2289215394670921245}
   - component: {fileID: 662039507075945684}
-  - component: {fileID: 9213855429340539084}
   m_Layer: 12
   m_Name: FloorA
   m_TagString: MovingPlatform
@@ -157,38 +156,6 @@ MonoBehaviour:
   startMovingToB: 1
   arrivalThreshold: 0.05
   pauseDuration: 0.5
---- !u!114 &9213855429340539084
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2162675192568796151}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 2
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 4096
-  m_UseGeometry: 1
-  m_DefaultArea: 0
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.1
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 4442b6af2a571d94ba8f95712a7528ae, type: 2}
-  m_BuildHeightMesh: 0
 --- !u!1 &7293175799637293597
 GameObject:
   m_ObjectHideFlags: 0
