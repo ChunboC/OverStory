@@ -789,7 +789,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7165dfb31c10b465d9e8bb7fb7eb1199, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
+  gameManager: {fileID: 1859789523}
   currentState: 0
   playerTransform: {fileID: 252407625}
   beanstalkDestination: {fileID: 1125254169}
@@ -846,17 +846,19 @@ MonoBehaviour:
     nextChoices:
     - {fileID: 920781231}
   waypointArrivalRadius: 2
-  safeDistance: 20
+  minPauseLen: 5
+  maxPauseLen: 7
+  safeDistance: 15
   recalculatePathDistance: 2.5
   survivalTimeRequired: 45
   slimePrefab: {fileID: 3450760242328152523, guid: d11adf248e8224c2a97572c236eb436a, type: 3}
   dropPoint: {fileID: 0}
   obstacleCooldown: 20
   periodicDropCooldown: 28
-  normalSpeed: 1
-  accelerationSpeed: 2
-  panicSpeed: 14
-  waddleSpeed: 5
+  normalSpeed: 7
+  accelerationSpeed: 10
+  panicSpeed: 10
+  waddleSpeed: 2
   tiltIntensity: 5
   visualMeshTransform: {fileID: 2114451895}
 --- !u!195 &29733454
@@ -868,14 +870,14 @@ NavMeshAgent:
   m_GameObject: {fileID: 29733450}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.3
-  m_Speed: 1
-  m_Acceleration: 8
+  m_Radius: 0.75
+  m_Speed: 7
+  m_Acceleration: 10
   avoidancePriority: 50
   m_AngularSpeed: 360
-  m_StoppingDistance: 0
+  m_StoppingDistance: 0.5
   m_AutoTraverseOffMeshLink: 0
-  m_AutoBraking: 1
+  m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
@@ -962,8 +964,8 @@ Transform:
   m_GameObject: {fileID: 29733450}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 6, y: 0.3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 20, y: 0.3, z: 0}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2114451895}
@@ -4366,7 +4368,7 @@ Transform:
   m_GameObject: {fileID: 252407616}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.6, z: 0}
+  m_LocalPosition: {x: -1, y: 0.6, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -17217,7 +17219,7 @@ GameObject:
   - component: {fileID: 1125254170}
   m_Layer: 0
   m_Name: Beanstalk
-  m_TagString: Untagged
+  m_TagString: Beanstalk
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -23328,7 +23330,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6291493910513487563, guid: 4eead59d2ca69554e9356d924e52cd51, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 6291493910513487563, guid: 4eead59d2ca69554e9356d924e52cd51, type: 3}
       propertyPath: m_LocalPosition.z
@@ -28239,7 +28241,7 @@ MonoBehaviour:
   introSceneCameras: {fileID: 0}
   cameraAnchor: {fileID: 0}
   playerGameObject: {fileID: 252407616}
-  enemyGameObject: {fileID: 0}
+  enemyGameObject: {fileID: 29733450}
   gamePlaying: 1
   firstSceneName: MainScene
   penaltyText: {fileID: 2106284721}

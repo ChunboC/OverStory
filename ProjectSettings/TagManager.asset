@@ -7,6 +7,7 @@ TagManager:
   - Ground
   - Enemy
   - MovingPlatform
+  - Beanstalk
   layers:
   - Default
   - TransparentFX

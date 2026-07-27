@@ -26,6 +26,8 @@ public class EnemyAI : MonoBehaviour
 
     private GameObject currentTargetWaypoint;
     private bool isWaitingForPlayer = false;
+    public float minPauseLen = 3f;
+    public float maxPauseLen = 8f;
 
     [System.Serializable]
     public struct WaypointBranch
@@ -35,7 +37,7 @@ public class EnemyAI : MonoBehaviour
     }
 
     [Header("Tactical Evasion Settings")]
-    public float safeDistance = 20f;
+    public float safeDistance = 15f;
     public float recalculatePathDistance = 2.5f;
 
     [Header("Game Loop Timer")]
@@ -144,7 +146,7 @@ public class EnemyAI : MonoBehaviour
 
     private void HandleEvasion()
     {
-        if (isJumping || isWaitingForPlayer) return;
+        if (isJumping || isWaitingForPlayer || currentState != AIState.Evade) return;
         if (anim) anim.SetBool("IsRunning", true);
 
         ApplyProceduralWaddle();
@@ -163,7 +165,7 @@ public class EnemyAI : MonoBehaviour
 
         if (!isSlowed)
         {
-            agent.speed = distanceToPlayer < safeDistance ? panicSpeed : normalSpeed;
+            agent.speed = distanceToPlayer < safeDistance/3.0 ? panicSpeed : normalSpeed;
         }
 
         if (isMakingFinalDash)
@@ -177,7 +179,7 @@ public class EnemyAI : MonoBehaviour
 
         if (currentTargetWaypoint != null && !agent.pathPending && agent.remainingDistance <= waypointArrivalRadius)
         {
-            if (playerTransform != null && distanceToPlayer > 14f)
+            if (playerTransform != null && distanceToPlayer > safeDistance)
             {
                 StartCoroutine(WaypointWaitRoutine());
             }
@@ -194,11 +196,15 @@ public class EnemyAI : MonoBehaviour
         agent.isStopped = true;
         if (anim) anim.SetBool("IsRunning", false);
 
-        float pauseDuration = Random.Range(1.5f, 3.5f);
+        currentState = AIState.Laugh;
+
+        float pauseDuration = Random.Range(minPauseLen, maxPauseLen);
         yield return new WaitForSeconds(pauseDuration);
 
         agent.isStopped = false;
         isWaitingForPlayer = false;
+
+        currentState = AIState.Evade;
 
         AdvanceToNextWaypointBranch();
     }
@@ -211,7 +217,8 @@ public class EnemyAI : MonoBehaviour
         {
             if (branch.currentPlatform == currentTargetWaypoint && branch.nextChoices != null && branch.nextChoices.Count > 0)
             {
-                int randomIndex = Random.Range(0, branch.nextChoices.Count);
+                //int randomIndex = Random.Range(0, branch.nextChoices.Count);
+                int randomIndex = 0;
                 nextPlatform = branch.nextChoices[randomIndex];
                 break;
             }
@@ -266,7 +273,7 @@ public class EnemyAI : MonoBehaviour
         float dotProduct = Vector3.Dot(transform.forward, dirToPlayer);
 
 
-        bool playerIsCloseBehind = (dotProduct < -0.6f && Vector3.Distance(transform.position, playerTransform.position) < 14f);
+        bool playerIsCloseBehind = (dotProduct < -0.6f && Vector3.Distance(transform.position, playerTransform.position) < safeDistance);
         bool periodicDropReady = (Time.time >= lastDropTime + periodicDropCooldown);
         if (playerIsCloseBehind || periodicDropReady)
         {
@@ -347,6 +354,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         transform.position = endPos;
+        agent.velocity = Vector3.zero;
         agent.CompleteOffMeshLink();
         agent.Warp(endPos);
 
@@ -371,5 +379,20 @@ public class EnemyAI : MonoBehaviour
         yield return new WaitForSeconds(duration);
         agent.speed = normalSpeedCache;
         isSlowed = false;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //Debug.Log("Player collided with something!");
+
+        if (collision.gameObject.CompareTag("Beanstalk"))
+        {
+            Debug.Log("Enemy reached the beanstalk!");
+
+            if (gameManager != null)
+            {
+                gameManager.LoseGame();
+            }
+        }
     }
 }
