@@ -6,6 +6,7 @@ public class LeprechaunPlayerAudio : MonoBehaviour
 {
     [Header("Audio Source")]
     public AudioSource audioSource;
+    public AudioSource dashAudioSource;
 
     [Header("Footstep Sounds")]
     public AudioClip[] footstepClips;
@@ -13,23 +14,27 @@ public class LeprechaunPlayerAudio : MonoBehaviour
     [Header("Player Sounds")]
     public AudioClip jumpSound;
     public AudioClip shootSound;
+    public AudioClip dashSound;
 
     [Header("Sound Volumes")]
     [Range(0f, 1f)] public float footstepVolume = 0.6f;
     [Range(0f, 1f)] public float jumpVolume = 0.7f;
     [Range(0f, 1f)] public float shootVolume = 0.7f;
+    [Range(0f, 1f)] public float dashVolume = 1f;
+
+    [Header("Sound Pitch")]
+    [Range(0.5f, 2f)]
+    public float dashPitch = 1.25f;
 
     [Header("Footstep Settings")]
     public float stepInterval = 0.45f;
     public float minMoveInput = 0.1f;
 
-    [Header("Ground Check")]
-    public float groundCheckDistance = 2.0f;
-
     private PlayerInput playerInput;
     private InputAction moveAction;
     private Rigidbody rb;
     private float stepTimer;
+    private PlayerController playerController;
 
     void Start()
     {
@@ -38,8 +43,16 @@ public class LeprechaunPlayerAudio : MonoBehaviour
             audioSource = GetComponent<AudioSource>();
         }
 
+        if (dashAudioSource != null)
+        {
+            dashAudioSource.playOnAwake = false;
+            dashAudioSource.loop = false;
+            dashAudioSource.spatialBlend = 0f;
+        }
+
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
+        playerController = GetComponent<PlayerController>();
 
         if (playerInput != null)
         {
@@ -63,7 +76,9 @@ public class LeprechaunPlayerAudio : MonoBehaviour
             return;
         }
 
-        bool grounded = IsGrounded();
+        bool grounded =
+            playerController != null &&
+            playerController.IsGrounded;
         bool pressingMove = IsPressingMoveInput();
 
         if (grounded && pressingMove)
@@ -81,12 +96,7 @@ public class LeprechaunPlayerAudio : MonoBehaviour
             // Reset immediately so footsteps stop as soon as player stops or jumps.
             stepTimer = 0f;
         }
-    }
-
-    bool IsGrounded()
-    {
-        return Physics.Raycast(transform.position, Vector3.down, groundCheckDistance);
-    }
+    }  
 
     bool IsPressingMoveInput()
     {
@@ -101,6 +111,12 @@ public class LeprechaunPlayerAudio : MonoBehaviour
 
     public void PlayFootstep()
     {
+        if (playerController == null ||
+        !playerController.IsGrounded)
+        {
+            return;
+        }
+
         if (footstepClips == null || footstepClips.Length == 0)
         {
             return;
@@ -120,6 +136,18 @@ public class LeprechaunPlayerAudio : MonoBehaviour
     public void PlayShoot()
     {
         PlaySound(shootSound, shootVolume);
+    }
+
+    public void PlayDash()
+    {
+        if (dashAudioSource == null || dashSound == null)
+        {
+            return;
+        }
+
+        dashAudioSource.Stop();
+        dashAudioSource.pitch = dashPitch;
+        dashAudioSource.PlayOneShot(dashSound, dashVolume);
     }
 
     private void PlaySound(AudioClip clip, float volume)

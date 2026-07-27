@@ -3,26 +3,54 @@ using UnityEngine;
 public class SlowingProjectile : MonoBehaviour
 {
     public float slowAmount = 0.5f; // 50% slow
-    public float slowDuration = 3f;  
+    public float slowDuration = 3f;
+
+    private bool hasHit;
 
     private void OnCollisionEnter(Collision collision)
     {
-        // 1. Log absolutely everything the flying projectile touches!
+        if (hasHit)
+        {
+            return;
+        }
+
         Debug.Log($"PROJECTILE HIT: '{collision.gameObject.name}'");
 
-        // 2. Check if we hit the enemy
-        EnemyAI enemy = collision.gameObject.GetComponent<EnemyAI>();
+        // Ignore collisions with the player.
+        if (collision.transform.root.CompareTag("Player"))
+        {
+            return;
+        }
+
+        // Check whether the shamrock hit the tutorial trainer.
+        ShamrockTrainerNPC trainer =
+            collision.collider.GetComponentInParent<ShamrockTrainerNPC>();
+
+        if (trainer != null)
+        {
+            hasHit = true;
+
+            Debug.Log("SUCCESS: Shamrock hit the trainer!");
+
+            trainer.ReceiveShamrockHit();
+
+            Destroy(gameObject);
+            return;
+        }
+
+        // Check whether the shamrock hit the regular enemy.
+        EnemyAI enemy =
+            collision.collider.GetComponentInParent<EnemyAI>();
 
         if (enemy != null)
         {
+            hasHit = true;
+
             Debug.Log("SUCCESS: Hit enemy and applied slow!");
+
             enemy.ApplySlow(slowAmount, slowDuration);
-            Destroy(gameObject); // Destroy instantly on enemy hit
-        }
-        else if (collision.gameObject.CompareTag("Player"))
-        {
-            // Ignore the player's face/arms if it clips them on spawn
-            return;
+
+            Destroy(gameObject);
         }
     }
 }
