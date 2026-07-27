@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour
             RunProgress.AirDashUnlocked;
 
         Debug.Log(
-            $"Loaded abilities — Double Jump: {doubleJumpUnlocked}, " +
+            $"Loaded abilities ï¿½ Double Jump: {doubleJumpUnlocked}, " +
             $"Air Dash: {airDashUnlocked}"
         );
     }
@@ -487,7 +487,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Player collided with something!");
+        //Debug.Log("Player collided with something!");
 
         if (collision.gameObject.CompareTag("Enemy"))
         {

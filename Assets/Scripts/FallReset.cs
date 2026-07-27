@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class FallReset : MonoBehaviour
 {
@@ -12,59 +13,93 @@ public class FallReset : MonoBehaviour
     [Header("References")]
     public GameManager gameManager;
 
-    private Vector3 spawnPosition;
-    private Quaternion spawnRotation;
+    private Vector3 lastSafePosition;
+    private Quaternion lastSafeRotation;
     private Rigidbody rb;
-    private CharacterController characterController;
+    private PlayerController playerController;
+
+    private bool isRespawning; // Flag to prevent multiple triggers in a single fall
 
     private void Start()
     {
         // Save initial position and rotation as the respawn point
-        spawnPosition = transform.position;
-        spawnRotation = transform.rotation;
+        lastSafePosition = transform.position;
+        lastSafeRotation = transform.rotation;
 
         // Cache components if present
         rb = GetComponent<Rigidbody>();
-        characterController = GetComponent<CharacterController>();
+        playerController = GetComponent<PlayerController>();
+
+        isRespawning = false;
     }
 
     private void Update()
     {
+        if (isRespawning) return;
+        
+        if (Time.frameCount % 30 == 0)
+        {
+            UpdateSafePosition();
+        }
+        
         if (transform.position.y < thresholdY)
         {
-            RespawnPlayer();
+            StartCoroutine(RespawnPlayer());
         }
     }
 
-    private void RespawnPlayer()
+    private void UpdateSafePosition()
     {
+        if (playerController != null)
+        {
+            if (playerController.IsGrounded && transform.position.y >= -1) // Only save position when touching safe ground
+            {
+                //Debug.Log("updating safe resparwn position");
+                lastSafePosition = transform.position;
+                lastSafeRotation = transform.rotation;
+            }
+        }
+    }
+
+    private IEnumerator RespawnPlayer()
+    {
+        isRespawning = true;
+        
         // Deduct time from the timer
         if (gameManager != null)
         {
+            Debug.Log("Dedecting time!");
             gameManager.DeductTime(timePenalty);
         }
 
         // If using CharacterController, disable it temporarily so transform moves work properly
-        if (characterController != null)
+        if (playerController != null)
         {
-            characterController.enabled = false;
+            playerController.enabled = false;
         }
 
         // Reset position and rotation
-        transform.position = spawnPosition;
-        transform.rotation = spawnRotation;
+        transform.position = lastSafePosition;
+        transform.rotation = lastSafeRotation;
 
         // Re-enable CharacterController
-        if (characterController != null)
+        if (playerController != null)
         {
-            characterController.enabled = true;
+            playerController.enabled = true;
         }
 
-        // Zero out momentum if using 3D Physics (Rigidbody)
+        // Zero out momentum if using Rigidbody
         if (rb != null)
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
+
+        Physics.SyncTransforms();
+        yield return new WaitForFixedUpdate();
+
+        yield return new WaitForSeconds(2);
+
+        isRespawning = false;
     }
 }
