@@ -25985,6 +25985,9 @@ MonoBehaviour:
   selectedWinButton: {fileID: 0}
   loseMenuUI: {fileID: 0}
   selectedLoseButton: {fileID: 0}
+  creditsMenuUI: {fileID: 0}
+  selectedCreditsButton: {fileID: 0}
+  selectedBackButton: {fileID: 0}
   playerInput: {fileID: 252407621}
   preGameDirector: {fileID: 0}
   introSceneCameras: {fileID: 0}
@@ -26154,6 +26157,99 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3950641789933232962, guid: 91f5fbb74ea01ed4e9e88547ee338322, type: 3}
   m_PrefabInstance: {fileID: 1873567972}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1878652757
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2561047109279602119, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.6824289
+      objectReference: {fileID: 0}
+    - target: {fileID: 2561047109279602119, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.1072947
+      objectReference: {fileID: 0}
+    - target: {fileID: 2561047109279602119, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6.728261
+      objectReference: {fileID: 0}
+    - target: {fileID: 2561047109279602119, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2561047109279602119, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2561047109279602119, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2561047109279602119, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2561047109279602119, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2561047109279602119, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2561047109279602119, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6979881028094352406, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: m_Name
+      value: WeatherManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: playerRb
+      value: 
+      objectReference: {fileID: 252407623}
+    - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: windForce
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: rainEffect
+      value: 
+      objectReference: {fileID: 160098, guid: 69b40ef7ee16c834c844b3fa26e0fdda, type: 3}
+    - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: rainPrefab
+      value: 
+      objectReference: {fileID: 160098, guid: 69b40ef7ee16c834c844b3fa26e0fdda, type: 3}
+    - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: gameManager
+      value: 
+      objectReference: {fileID: 1859789523}
+    - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: knockbackForce
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: playerTransform
+      value: 
+      objectReference: {fileID: 252407625}
+    - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: timeBetweenStorms
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7877136768165751415, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
+      propertyPath: lightningWarningPrefab
+      value: 
+      objectReference: {fileID: 2648505695338628248, guid: aff1f96c0a04d4cfbbad06fc06a02a85, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ff60b78ea9d1b482cb06b1f197d17cbf, type: 3}
 --- !u!1001 &1892625421
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31014,3 +31110,4 @@ SceneRoots:
   - {fileID: 1125254169}
   - {fileID: 376724971}
   - {fileID: 1126313321}
+  - {fileID: 1878652757}
