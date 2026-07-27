@@ -129,8 +129,11 @@ public class EnemyAI : MonoBehaviour
                 ResetWaddleOrientation();
                 break;
             case AIState.Evade:
-                HandleEvasion();
-                HandleTacticalDrops();
+                if (!isSlowed)
+                {
+                    HandleEvasion();
+                    HandleTacticalDrops();
+                }
                 break;
             case AIState.Jump:
                 if (anim) anim.SetBool("IsRunning", false);
@@ -147,7 +150,7 @@ public class EnemyAI : MonoBehaviour
     private void HandleEvasion()
     {
         if (isJumping || isWaitingForPlayer || currentState != AIState.Evade) return;
-        if (anim) anim.SetBool("IsRunning", true);
+        if (anim && !anim.GetBool("isHit")) anim.SetBool("IsRunning", true);
 
         ApplyProceduralWaddle();
 
@@ -374,10 +377,14 @@ public class EnemyAI : MonoBehaviour
     private IEnumerator SlowRoutine(float slowPercentage, float duration)
     {
         isSlowed = true;
-        agent.speed = normalSpeedCache * slowPercentage;
+        anim.SetBool("isHit", true);
+        agent.isStopped = true;
+        agent.speed = 0;
         yield return new WaitForSeconds(duration);
         agent.speed = normalSpeedCache;
         isSlowed = false;
+        agent.isStopped = false;
+        anim.SetBool("isHit", false);
     }
 
     private void OnCollisionEnter(Collision collision)
