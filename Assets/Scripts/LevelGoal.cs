@@ -8,7 +8,7 @@ public class LevelGoal : MonoBehaviour
 {
     [Header("Destination")]
     [Tooltip("Scene to load once the player reaches this goal.")]
-    public string nextSceneName = "MainScene";
+    public string nextSceneName = "WinScene";
 
     [Header("References")]
     public GameManager gameManager;
