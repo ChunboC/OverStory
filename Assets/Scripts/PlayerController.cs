@@ -487,7 +487,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Player collided with something!");
+        //Debug.Log("Player collided with something!");
 
         if (collision.gameObject.CompareTag("Enemy"))
         {
