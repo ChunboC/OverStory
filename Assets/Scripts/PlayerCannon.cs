@@ -25,6 +25,16 @@ public class PlayerCannon : MonoBehaviour
     [Header("Cannon Effects")]
     [SerializeField] private ParticleSystem cannonSmoke;
 
+    [Header("Cannon Audio")]
+    [SerializeField] private AudioSource cannonAudioSource;
+    [SerializeField] private AudioClip cannonShootSound;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float cannonShootVolume = 0.9f;
+
+    [Range(0.5f, 2f)]
+    [SerializeField] private float cannonShootPitch = 1f;
+
     private PlayerController playerController;
     private Rigidbody playerRigidbody;
     private PlayerInput playerInput;
@@ -192,11 +202,29 @@ public class PlayerCannon : MonoBehaviour
             cannonSmoke.Play();
         }
 
+        PlayCannonSound();
+
         playerRigidbody.linearVelocity = launchVelocity;
 
         cannonActive = false;
 
         StartCoroutine(UnlockPlayerAfterLanding());
+    }
+
+    private void PlayCannonSound()
+    {
+        if (cannonAudioSource == null || cannonShootSound == null)
+        {
+            return;
+        }
+
+        cannonAudioSource.Stop();
+        cannonAudioSource.pitch = cannonShootPitch;
+
+        cannonAudioSource.PlayOneShot(
+            cannonShootSound,
+            cannonShootVolume
+        );
     }
 
     private Vector3 CalculateLaunchVelocity(
