@@ -7,6 +7,7 @@ TagManager:
   - Ground
   - Enemy
   - MovingPlatform
+  - Beanstalk
   layers:
   - Default
   - TransparentFX
@@ -19,8 +20,8 @@ TagManager:
   - Slime
   - NavAvoid
   - CannonTarget
-  - 
-  - 
+  - Stationary_Platform
+  - Moving_Platform
   - 
   - 
   - 

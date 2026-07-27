@@ -1,3 +1,5 @@
+
+
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
@@ -6,41 +8,57 @@ using System.Collections.Generic;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviour
 {
-    public enum AIState { Idle, Evade, Jump, Escaped, Laugh } // Removed DropObstacle
+    public enum AIState { Idle, Evade, Jump, Escaped, Laugh }
     public GameManager gameManager;
-    
+
     [Header("AI State & Core Targets")]
     public AIState currentState = AIState.Idle;
     public Transform playerTransform;
-    public Transform beanstalkDestination; 
-    private NavMeshAgent agent; 
+    public Transform beanstalkDestination;
+    private NavMeshAgent agent;
     private Animator anim;
     private TrollAudio trollAudio;
 
+    [Header("Waypoint Course Progression")]
+    public GameObject startingWaypoint;
+    public List<WaypointBranch> pathIntersections = new List<WaypointBranch>();
+    public float waypointArrivalRadius = 2.0f;
+
+    private GameObject currentTargetWaypoint;
+    private bool isWaitingForPlayer = false;
+    public float minPauseLen = 3f;
+    public float maxPauseLen = 8f;
+
+    [System.Serializable]
+    public struct WaypointBranch
+    {
+        public GameObject currentPlatform;
+        public List<GameObject> nextChoices;
+    }
+
     [Header("Tactical Evasion Settings")]
-    public float fleeRadius = 15f;
-    public float safeDistance = 20f; 
-    public int samplePoints = 8; 
+    public float safeDistance = 15f;
     public float recalculatePathDistance = 2.5f;
 
     [Header("Game Loop Timer")]
-    public float survivalTimeRequired = 45f; 
+    public float survivalTimeRequired = 45f;
     private float currentSurvivalTime = 0f;
     private bool isMakingFinalDash = false;
 
     [Header("Tactical Spawning")]
     public GameObject slimePrefab;
-    public Transform dropPoint; 
-    public float obstacleCooldown = 4.0f; 
-    public float periodicDropCooldown = 8.0f; 
+    public Transform dropPoint;
+    public float obstacleCooldown = 4.0f;
+    public float periodicDropCooldown = 8.0f;
     private float lastDropTime = 0f;
 
     [Header("Movement & Animation")]
     public float normalSpeed = 10f;
+    public float accelerationSpeed = 10f;
     public float panicSpeed = 14f;
-    public float waddleSpeed = 10f;      
-    public float tiltIntensity = 18f;    
-    public Transform visualMeshTransform; 
+    public float waddleSpeed = 10f;
+    public float tiltIntensity = 18f;
+    public Transform visualMeshTransform;
 
     private bool isJumping = false;
     private bool isDroppingObstacle = false;
@@ -53,18 +71,37 @@ public class EnemyAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponentInChildren<Animator>();
         trollAudio = GetComponent<TrollAudio>();
-        
-        agent.autoTraverseOffMeshLink = true; 
-        agent.autoBraking = false; 
-        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance; 
-        
+
+        agent.autoTraverseOffMeshLink = false;
+        agent.autoBraking = false;
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+
         normalSpeedCache = normalSpeed;
         agent.speed = normalSpeed;
-        agent.acceleration = 24f;
+        agent.acceleration = accelerationSpeed;
 
         if (playerTransform == null)
         {
             playerTransform = GameObject.FindWithTag("Player")?.transform;
+        }
+
+        if (startingWaypoint != null)
+        {
+            currentTargetWaypoint = startingWaypoint;
+
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(startingWaypoint.transform.position, out navHit, 6.0f, NavMesh.AllAreas))
+            {
+                agent.SetDestination(navHit.position);
+            }
+            else
+            {
+                agent.SetDestination(startingWaypoint.transform.position);
+            }
+        }
+        else if (beanstalkDestination != null)
+        {
+            agent.SetDestination(beanstalkDestination.position);
         }
 
         currentState = AIState.Evade;
@@ -95,7 +132,7 @@ public class EnemyAI : MonoBehaviour
                 HandleEvasion();
                 HandleTacticalDrops();
                 break;
-            case AIState.Jump: 
+            case AIState.Jump:
                 if (anim) anim.SetBool("IsRunning", false);
                 ResetWaddleOrientation();
                 break;
@@ -109,7 +146,7 @@ public class EnemyAI : MonoBehaviour
 
     private void HandleEvasion()
     {
-        if (isJumping) return; // Allowed to evade while dropping obstacle
+        if (isJumping || isWaitingForPlayer || currentState != AIState.Evade) return;
         if (anim) anim.SetBool("IsRunning", true);
 
         ApplyProceduralWaddle();
@@ -125,68 +162,88 @@ public class EnemyAI : MonoBehaviour
         }
 
         float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
-        
+
         if (!isSlowed)
         {
-            agent.speed = distanceToPlayer < 12f ? panicSpeed : normalSpeed;
+            agent.speed = distanceToPlayer < safeDistance/3.0 ? panicSpeed : normalSpeed;
         }
 
-        if (!agent.pathPending && agent.remainingDistance < recalculatePathDistance)
+        if (isMakingFinalDash)
         {
-            Vector3 bestTarget;
-            
-            if (isMakingFinalDash)
+            if (!agent.pathPending && agent.remainingDistance < recalculatePathDistance)
             {
-                Vector3 dirToBeanstalk = (beanstalkDestination.position - transform.position).normalized;
-                Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
-                
-                if (Vector3.Dot(dirToBeanstalk, dirToPlayer) > 0.6f && distanceToPlayer < 8f) 
-                {
-                    bestTarget = CalculateBestEvasionPoint(); 
-                }
-                else
-                {
-                    bestTarget = beanstalkDestination.position; 
-                }
+                agent.SetDestination(beanstalkDestination.position);
+            }
+            return;
+        }
+
+        if (currentTargetWaypoint != null && !agent.pathPending && agent.remainingDistance <= waypointArrivalRadius)
+        {
+            if (playerTransform != null && distanceToPlayer > safeDistance)
+            {
+                StartCoroutine(WaypointWaitRoutine());
             }
             else
             {
-                bestTarget = CalculateBestEvasionPoint();
+                AdvanceToNextWaypointBranch();
             }
-
-            agent.SetDestination(bestTarget);
         }
     }
 
-    private Vector3 CalculateBestEvasionPoint()
+    private IEnumerator WaypointWaitRoutine()
     {
-        Vector3 bestPoint = transform.position;
-        float highestScore = -Mathf.Infinity;
+        isWaitingForPlayer = true;
+        agent.isStopped = true;
+        if (anim) anim.SetBool("IsRunning", false);
 
-        NavMeshPath testPath = new NavMeshPath(); 
+        currentState = AIState.Laugh;
 
-        for (int i = 0; i < samplePoints; i++)
+        float pauseDuration = Random.Range(minPauseLen, maxPauseLen);
+        yield return new WaitForSeconds(pauseDuration);
+
+        agent.isStopped = false;
+        isWaitingForPlayer = false;
+
+        currentState = AIState.Evade;
+
+        AdvanceToNextWaypointBranch();
+    }
+
+    private void AdvanceToNextWaypointBranch()
+    {
+        GameObject nextPlatform = null;
+
+        foreach (var branch in pathIntersections)
         {
-            Vector2 randomDir = Random.insideUnitCircle.normalized * fleeRadius;
-            Vector3 samplePos = transform.position + new Vector3(randomDir.x, 0, randomDir.y);
-
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(samplePos, out hit, 4f, NavMesh.AllAreas))
+            if (branch.currentPlatform == currentTargetWaypoint && branch.nextChoices != null && branch.nextChoices.Count > 0)
             {
-                agent.CalculatePath(hit.position, testPath);
-                
-                if (testPath.status == NavMeshPathStatus.PathComplete)
-                {
-                    float score = EvaluatePosition(hit.position);
-                    if (score > highestScore)
-                    {
-                        highestScore = score;
-                        bestPoint = hit.position;
-                    }
-                }
+                int randomIndex = Random.Range(0, branch.nextChoices.Count);
+                nextPlatform = branch.nextChoices[randomIndex];
+                break;
             }
         }
-        return bestPoint;
+
+        if (nextPlatform != null)
+        {
+            //Debug.Log($"NEXT PLATFORM: {nextPlatform}");
+            currentTargetWaypoint = nextPlatform;
+
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(nextPlatform.transform.position, out navHit, 6.0f, NavMesh.AllAreas))
+            {
+                agent.SetDestination(navHit.position);
+            }
+            else
+            {
+                agent.SetDestination(currentTargetWaypoint.transform.position);
+            }
+        }
+        else if (beanstalkDestination != null)
+        {
+            //Debug.Log($"HEADING FOR BEANSTALK");
+            currentTargetWaypoint = null;
+            agent.SetDestination(beanstalkDestination.position);
+        }
     }
 
     private float EvaluatePosition(Vector3 candidatePos)
@@ -198,11 +255,11 @@ public class EnemyAI : MonoBehaviour
 
         if (distToPlayer < currentDistToPlayer)
         {
-            score -= 1000f; 
+            score -= 1000f;
         }
 
-        score += distToPlayer * 2.5f; 
-        score -= distToGoal * 1.0f;   
+        score += distToPlayer * 2.5f;
+        score -= distToGoal * 1.0f;
 
         return score;
     }
@@ -214,126 +271,96 @@ public class EnemyAI : MonoBehaviour
         Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
         float dotProduct = Vector3.Dot(transform.forward, dirToPlayer);
 
-        bool playerIsCloseBehind = (dotProduct < -0.6f && Vector3.Distance(transform.position, playerTransform.position) < 14f);
-        bool periodicDropReady = (Time.time >= lastDropTime + periodicDropCooldown);
 
+        bool playerIsCloseBehind = (dotProduct < -0.6f && Vector3.Distance(transform.position, playerTransform.position) < safeDistance);
+        bool periodicDropReady = (Time.time >= lastDropTime + periodicDropCooldown);
         if (playerIsCloseBehind || periodicDropReady)
         {
             StartCoroutine(PerformDropObstacleSequence());
         }
     }
-
     private IEnumerator PerformDropObstacleSequence()
     {
         isDroppingObstacle = true;
         lastDropTime = Time.time;
-
-        if (anim != null) anim.SetTrigger("Attack"); 
-        
+        if (anim != null) anim.SetTrigger("Attack");
         SpawnSlimePuddle();
-
         yield return new WaitForSeconds(1.2f);
-        
         isDroppingObstacle = false;
     }
-
     void SpawnSlimePuddle()
     {
         if (slimePrefab != null)
         {
             Vector3 basePos = dropPoint != null ? dropPoint.position : (transform.position - transform.forward * 2.5f);
             Vector3 spawnPosition = basePos;
-            
             Collider[] hits = Physics.OverlapSphere(basePos, 1.5f, LayerMask.GetMask("Building"));
             if (hits.Length > 0)
             {
-                spawnPosition = basePos + (transform.right * 2.0f);
+                spawnPosition = basePos + (transform.forward * 2.5f);
             }
-
-            spawnPosition.y = transform.position.y - 0.1f; 
-            
-            GameObject puddle = Instantiate(slimePrefab, spawnPosition, Quaternion.identity);
-            puddle.layer = LayerMask.NameToLayer("Slime");
-
-            if (trollAudio != null) trollAudio.PlaySlimeDrop();
-            if (puddle.GetComponent<SlimeTrigger>() == null) puddle.AddComponent<SlimeTrigger>();
+            Instantiate(slimePrefab, spawnPosition, Quaternion.identity);
         }
     }
-
-    private void OnTriggerEnter(Collider other)
+    private void ApplyProceduralWaddle()
     {
-        if (other.transform == beanstalkDestination)
+        if (visualMeshTransform == null) return;
+        float waddle = Mathf.Sin(Time.time * waddleSpeed) * tiltIntensity;
+        visualMeshTransform.localRotation = Quaternion.Euler(0, 0, waddle);
+    }
+    private void ResetWaddleOrientation()
+    {
+        if (visualMeshTransform == null) return;
+        visualMeshTransform.localRotation = Quaternion.identity;
+    }
+    private void EnforceNavMeshGroundingBounds()
+    {
+        if (agent.isOnOffMeshLink || isJumping || currentState == AIState.Jump) return;
+
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(transform.position, out hit, 1.0f, NavMesh.AllAreas))
         {
-            currentState = AIState.Escaped;
-            TriggerVictoryState();
+            if (transform.position.y < hit.position.y - 0.1f)
+            {
+                transform.position = new Vector3(transform.position.x, hit.position.y, transform.position.z);
+            }
         }
     }
-
     private IEnumerator TriggerTrollJump()
     {
         isJumping = true;
-        agent.isStopped = true;
-        if (anim) anim.SetBool("IsRunning", false);
-        ResetWaddleOrientation();
 
-        OffMeshLinkData data = agent.currentOffMeshLinkData;
+        if (anim) anim.SetTrigger("JumpTrigger");
+
+        OffMeshLinkData linkData = agent.currentOffMeshLinkData;
         Vector3 startPos = transform.position;
-        Vector3 endPos = data.endPos;
+        Vector3 endPos = linkData.endPos;
 
-        float jumpDuration = 1.6f; 
-        for (float t = 0; t < jumpDuration; t += Time.deltaTime)
+        float jumpDuration = 0.8f;
+        float jumpHeight = 4.0f;
+        float normalizedTime = 0.0f;
+
+        while (normalizedTime < 1.0f)
         {
-            float normalizedT = t / jumpDuration;
-            transform.position = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0, 1, normalizedT)) + Vector3.up * (Mathf.Sin(normalizedT * Mathf.PI) * 3.2f);
-            if (anim) anim.Play("jumping", 0, Mathf.Clamp01(normalizedT * 0.7f));
+            normalizedTime += Time.deltaTime / jumpDuration;
+
+            Vector3 currentPos = Vector3.Lerp(startPos, endPos, normalizedTime);
+            currentPos.y += Mathf.Sin(normalizedTime * Mathf.PI) * jumpHeight;
+
+            transform.position = currentPos;
+
             yield return null;
         }
-        
+
         transform.position = endPos;
-        if (agent.isOnNavMesh)
-        {
-            agent.CompleteOffMeshLink();
-            agent.isStopped = false;
-        }
-        
+        agent.velocity = Vector3.zero;
+        agent.CompleteOffMeshLink();
+        agent.Warp(endPos);
+
         isJumping = false;
         currentState = stateBeforeJump;
     }
 
-    private void EnforceNavMeshGroundingBounds()
-    {
-        if (agent.velocity.sqrMagnitude < 0.1f && !agent.pathPending && !isJumping && !isDroppingObstacle)
-        {
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(transform.position, out hit, 1.5f, NavMesh.AllAreas))
-            {
-                if (Vector3.Distance(transform.position, hit.position) > 0.2f)
-                {
-                    transform.position = hit.position;
-                    agent.SetDestination(CalculateBestEvasionPoint());
-                }
-            }
-        }
-    }
-
-    private void ApplyProceduralWaddle()
-    {
-        if (visualMeshTransform != null && agent.velocity.sqrMagnitude > 0.1f)
-            visualMeshTransform.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(Time.time * waddleSpeed) * tiltIntensity);
-    }
-
-    private void ResetWaddleOrientation() { if (visualMeshTransform != null) visualMeshTransform.localRotation = Quaternion.identity; }
-    
-    public void TriggerVictoryState()
-    {
-        currentState = AIState.Laugh;
-        if (anim) { anim.SetBool("IsRunning", false); anim.SetTrigger("Laugh"); }
-        
-        if (gameManager != null)
-        {
-            gameManager.LoseGame(); 
-        }
-    }
 
     public void ApplySlow(float slowPercentage, float duration)
     {
@@ -351,5 +378,20 @@ public class EnemyAI : MonoBehaviour
         yield return new WaitForSeconds(duration);
         agent.speed = normalSpeedCache;
         isSlowed = false;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //Debug.Log("Player collided with something!");
+
+        if (collision.gameObject.CompareTag("Beanstalk"))
+        {
+            Debug.Log("Enemy reached the beanstalk!");
+
+            if (gameManager != null)
+            {
+                gameManager.LoseGame();
+            }
+        }
     }
 }

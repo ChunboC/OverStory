@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2183121860634598343}
   - component: {fileID: 5778178291222483291}
   - component: {fileID: 5732199038459276146}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3971549634268453705}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Base_Cloud
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -232,6 +232,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 331b8fa2230d0f84397fb0e9e7636450, type: 3}
       propertyPath: m_Name
       value: rolling_cloud_animation
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f1a7bb1df310da54595b3259be561617, type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
