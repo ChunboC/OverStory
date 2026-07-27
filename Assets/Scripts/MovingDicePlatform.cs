@@ -56,6 +56,10 @@ public class MovingDicePlatform : MonoBehaviour
     private bool completed;
     private bool playerInsideDetector;
 
+    private Vector3 originalRigidbodyPosition;
+    private Quaternion originalRigidbodyRotation;
+    private Vector3 originalCenter;
+
     private int patternIndex;
 
     private readonly Vector3[] rotationPattern =
@@ -101,6 +105,17 @@ public class MovingDicePlatform : MonoBehaviour
                 this
             );
         }
+
+        originalRigidbodyPosition =
+            platformRigidbody.position;
+
+        originalRigidbodyRotation =
+            platformRigidbody.rotation;
+
+        originalCenter =
+            originalRigidbodyPosition +
+            originalRigidbodyRotation *
+            localCenterOffset;
     }
 
     private void FixedUpdate()
@@ -455,5 +470,39 @@ public class MovingDicePlatform : MonoBehaviour
             destination,
             0.4f
         );
+    }
+
+    public void RecallPlatform()
+    {
+        hasStarted = false;
+        reachedEnd = false;
+        isRolling = false;
+        completed = false;
+
+        playerInsideDetector = false;
+        passengerRigidbody = null;
+
+        distanceMoved = 0f;
+        rollElapsed = 0f;
+        waitElapsed = 0f;
+
+        startingCenter = originalCenter;
+        endingCenter = originalCenter;
+        currentCenter = originalCenter;
+
+        currentRotation = originalRigidbodyRotation;
+        rollStartRotation = originalRigidbodyRotation;
+        rollTargetRotation = originalRigidbodyRotation;
+
+        platformRigidbody.position =
+            originalRigidbodyPosition;
+
+        platformRigidbody.rotation =
+            originalRigidbodyRotation;
+
+        platformRigidbody.linearVelocity = Vector3.zero;
+        platformRigidbody.angularVelocity = Vector3.zero;
+
+        Debug.Log("Dice platform recalled.", this);
     }
 }
