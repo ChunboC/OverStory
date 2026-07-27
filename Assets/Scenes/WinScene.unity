@@ -1386,6 +1386,9 @@ MonoBehaviour:
   selectedWinButton: {fileID: 146303091}
   loseMenuUI: {fileID: 0}
   selectedLoseButton: {fileID: 0}
+  creditsMenuUI: {fileID: 0}
+  selectedCreditsButton: {fileID: 0}
+  selectedBackButton: {fileID: 0}
   playerInput: {fileID: 0}
   preGameDirector: {fileID: 0}
   introSceneCameras: {fileID: 0}
@@ -1393,7 +1396,7 @@ MonoBehaviour:
   playerGameObject: {fileID: 0}
   enemyGameObject: {fileID: 0}
   gamePlaying: 0
-  firstSceneName: MainScene
+  firstSceneName: TutorialVillage
   penaltyText: {fileID: 0}
   penaltyTextDuration: 2
 --- !u!4 &1641761756
